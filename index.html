@@ -17,7 +17,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Google Fonts: Quicksand -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body { 
@@ -47,14 +47,6 @@
         .card-hover { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px -10px rgba(251, 113, 133, 0.25); z-index: 10; }
 
-        /* Image Handling */
-        .upload-area {
-            background-color: #fff0f5; 
-            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23FDA4AF' stroke-width='2' stroke-dasharray='12%2c 12' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
-            transition: all 0.3s ease;
-        }
-        .upload-area:hover { background-color: #ffe4e6; cursor: pointer; transform: scale(0.98); }
-
         .img-fallback {
             background-color: #ffe4e6;
             display: flex; align-items: center; justify-content: center;
@@ -68,7 +60,7 @@
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #fb7185; }
 
         /* Heart Animation */
-        .heart-beat:active { animation: heartPop 0.3s ease-out forwards; }
+        .heart-active { animation: heartPop 0.3s ease-out forwards; }
         @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
     </style>
 </head>
@@ -232,18 +224,16 @@
             { id: "p_f19", city: "Prag", cat: "Essen", subtag: "street", title: "Sisters Bistro", cost: 15, time: "30min", res: "Nein", address: "Dlouhá 39, 110 00 Prag", desc: "Brötchen.", img: "sistersbi.jpg" },
             { id: "p_f20", city: "Prag", cat: "Essen", subtag: "street", title: "Bageterie Boulevard", cost: 10, time: "15min", res: "Nein", address: "Václavské nám. 56, 110 00 Prag", desc: "Baguettes.", img: "bageteriebo.jpg" },
             { id: "p_f21", city: "Prag", cat: "Essen", subtag: "street", title: "Burrito Loco", cost: 10, time: "15min", res: "Nein", address: "Štefánikova 230/7, 150 00 Prag", desc: "Burritos.", img: "burritolo.jpg" },
-            { id: "p_f22", city: "Prag", cat: "Essen", subtag: "casual", title: "Bistro Monk", cost: 30, time: "1h", res: "Empfohlen", address: "Michalská 20, 110 00 Prag", desc: "Frühstück.", img: "bistromo.jpg" },
-            { id: "p_f23", city: "Prag", cat: "Essen", subtag: "casual", title: "Venue", cost: 30, time: "1h", res: "Nein", address: "Havelská 4, 110 00 Prag", desc: "Brunch.", img: "venue.jpg" },
-            { id: "p_f24", city: "Prag", cat: "Essen", subtag: "street", title: "Bakeshop", cost: 25, time: "30min", res: "Nein", address: "Kozí 1, 110 00 Prag", desc: "Bäckerei.", img: "bakeshop.jpg" },
-            { id: "p_f25", city: "Prag", cat: "Essen", subtag: "fine", title: "Café Savoy", cost: 40, time: "1.5h", res: "Empfohlen", address: "Vítězná 5, 150 00 Prag", desc: "Imperial.", img: "cafsa.jpg" },
-            { id: "p_f26", city: "Prag", cat: "Essen", subtag: "street", title: "Super Tramp Coffee", cost: 10, time: "30min", res: "Nein", address: "Opatovická 160/18, 110 00 Prag", desc: "Kaffee.", img: "supertr.jpg" },
-            { id: "p_f27", city: "Prag", cat: "Essen", subtag: "street", title: "Coffee Room", cost: 15, time: "45min", res: "Nein", address: "Korunní 74, 101 00 Prag", desc: "Avocado Toast.", img: "coffeero.jpg" },
-            { id: "p_f28", city: "Prag", cat: "Essen", subtag: "casual", title: "U Kroka", cost: 25, time: "1.5h", res: "Zwingend", address: "Vratislavova 12/28, 128 00 Prag", desc: "Abseits des Zentrums. Top Preis.", img: "ukr.jpg" },
-            { id: "p_f29", city: "Prag", cat: "Essen", subtag: "fine", title: "Lehká Hlava", cost: 30, time: "1.5h", res: "Empfohlen", address: "Boršov 280/2, 110 00 Prag", desc: "Vegetarisch, spacig.", img: "lehkhl.jpg" },
+            { id: "p_f22", city: "Prag", cat: "Essen", subtag: "casual", title: "Bistro Monk", cost: 30, time: "1h", res: "Empfohlen", address: "Michalská 20, 110 00 Prag", desc: "Sehr beliebtes Frühstück.", img: "bistromo.jpg" },
+            { id: "p_f23", city: "Prag", cat: "Essen", subtag: "casual", title: "Venue", cost: 30, time: "1h", res: "Nein", address: "Havelská 4, 110 00 Prag", desc: "Tolle Brunch-Teller.", img: "venue.jpg" },
+            { id: "p_f24", city: "Prag", cat: "Essen", subtag: "street", title: "Bakeshop", cost: 25, time: "30min", res: "Nein", address: "Kozí 1, 110 00 Prag", desc: "Dlouhá Straße. Backwaren.", img: "bakeshop.jpg" },
+            { id: "p_f25", city: "Prag", cat: "Essen", subtag: "fine", title: "Café Savoy", cost: 40, time: "1.5h", res: "Empfohlen", address: "Vítězná 5, 150 00 Prag", desc: "Prunkvoll frühstücken. Imperial Style.", img: "cafsa.jpg" },
+            { id: "p_f26", city: "Prag", cat: "Essen", subtag: "street", title: "Super Tramp Coffee", cost: 10, time: "30min", res: "Nein", address: "Opatovická 160/18, 110 00 Prag", desc: "Versteckter Innenhof.", img: "supertr.jpg" },
+            { id: "p_f27", city: "Prag", cat: "Essen", subtag: "street", title: "Coffee Room", cost: 15, time: "45min", res: "Nein", address: "Korunní 74, 101 00 Prag", desc: "Vinohrady. Bester Avocado Toast.", img: "coffeero.jpg" },
 
             // --- PRAG AKTIVITÄT ---
-            { id: "p_a1", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Bier Spa Bernard", cost: 90, time: "1h", res: "Zwingend", address: "Týn 10, 110 00 Prag", desc: "Baden in Bier.", img: "biersp.jpg" },
-            { id: "p_a2", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Nuklearbunker Tour", cost: 25, time: "2h", res: "Ticket", address: "Václavské nám. 45 (Hotel Jalta), 110 00 Prag", desc: "Ex-Sowjet Bunker.", img: "nuklearbunkerto.jpg" },
+            { id: "p_a1", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Bier Spa Bernard", cost: 90, time: "1h", res: "Zwingend", address: "Týn 10, 110 00 Prag", desc: "Baden in Bier, Zapfanlage an der Wanne.", img: "biersp.jpg" },
+            { id: "p_a2", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Nuklearbunker Tour", cost: 25, time: "2h", res: "Ticket", address: "Václavské nám. 45 (Hotel Jalta), 110 00 Prag", desc: "Ex-Sowjet Bunker unter Hotel Jalta.", img: "nuklearbunkerto.jpg" },
             { id: "p_a3", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Tretboot fahren", cost: 20, time: "1h", res: "Nein", address: "Slovanský ostrov, 110 00 Prag", desc: "Auf der Moldau (Slovanský Insel).", img: "tretbootfa.jpg" },
             { id: "p_a4", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Museum of Fantastic Illusions", cost: 15, time: "1h", res: "Nein", address: "Vodičkova 31, 110 00 Prag", desc: "Lustige Fotos.", img: "museumofprag.jpg" },
             { id: "p_a5", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Altstädter Brückenturm", cost: 10, time: "45min", res: "Nein", address: "Karlův most, 110 00 Prag", desc: "Aufstieg für den Karlsbrücke-Blick.", img: "altstdterbr.jpg" },
@@ -252,10 +242,10 @@
             { id: "p_a8", city: "Prag", cat: "Aktivität", subtag: "culture", title: "DOX Centre for Art", cost: 20, time: "2h", res: "Nein", address: "Poupětova 1, 170 00 Prag", desc: "Holešovice. Luftschiff auf dem Dach.", img: "doxce.jpg" },
             { id: "p_a9", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Magical Cavern", cost: 10, time: "45min", res: "Nein", address: "Petřín, 118 00 Prag", desc: "Psychedelisch.", img: "magicalca.jpg" },
             { id: "p_a10", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Idiom Installation", cost: 0, time: "15min", res: "Nein", address: "Mariánské nám. 1, 110 00 Prag", desc: "Unendlicher Bücherturm in der Bibliothek.", img: "idiomin.jpg" },
-            { id: "p_a11", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Fernsehturm Žižkov", cost: 15, time: "1h", res: "Nein", address: "Mahlerovy sady 1, 130 00 Prag", desc: "Babys.", img: "fernsehturmik.jpg" },
-            { id: "p_a12", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Letná Park", cost: 0, time: "1h", res: "Nein", address: "Letná, 170 00 Prag", desc: "Metronom.", img: "letnpa.jpg" },
-            { id: "p_a13", city: "Prag", cat: "Aktivität", subtag: "culture", title: "John Lennon Wall", cost: 0, time: "30min", res: "Nein", address: "Velkopřevorské nám., 118 00 Prag", desc: "Graffiti.", img: "johnle.jpg" },
-            { id: "p_a14", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Palladium", cost: 0, time: "1h", res: "Nein", address: "Náměstí Republiky 1, 110 00 Prag", desc: "Shopping.", img: "palladium.jpg" },
+            { id: "p_a11", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Fernsehturm Žižkov", cost: 15, time: "1h", res: "Nein", address: "Mahlerovy sady 1, 130 00 Prag", desc: "Babys krabbeln hoch. Aussicht.", img: "fernsehturmik.jpg" },
+            { id: "p_a12", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Letná Park (Metronom)", cost: 0, time: "1h", res: "Nein", address: "Letná, 170 00 Prag", desc: "Skater, Aussicht, Metronom.", img: "letnpa.jpg" },
+            { id: "p_a13", city: "Prag", cat: "Aktivität", subtag: "culture", title: "John Lennon Wall", cost: 0, time: "30min", res: "Nein", address: "Velkopřevorské nám., 118 00 Prag", desc: "Graffiti Wand.", img: "johnle.jpg" },
+            { id: "p_a14", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Palladium", cost: 0, time: "1h", res: "Nein", address: "Náměstí Republiky 1, 110 00 Prag", desc: "Shopping Mall.", img: "palladium.jpg" },
             { id: "p_a15", city: "Prag", cat: "Aktivität", subtag: "culture", title: "Nationalmuseum", cost: 20, time: "2h", res: "Nein", address: "Václavské nám. 68, 110 00 Prag", desc: "Prunkbau.", img: "nationalmuseum.jpg" },
             { id: "p_a16", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Sauna Spot Dvorce", cost: 35, time: "2h", res: "Empfohlen", address: "Podolské nábř. 1184/5, 147 00 Prag", desc: "Sauna an der Moldau.", img: "saunasp.jpg" },
             { id: "p_a17", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Infinit Maximus", cost: 50, time: "4h", res: "Empfohlen", address: "Hrázní 327/4a, 635 00 Brno", desc: "Riesige Saunawelt.", img: "infinitma.jpg" },
@@ -263,11 +253,11 @@
             // --- PRAG PARTY ---
             { id: "p_p1", city: "Prag", cat: "Party", subtag: "club", title: "Cross Club", cost: 15, time: "Bis 06:00", res: "Nein", address: "Plynární 1096/23, 170 00 Prag", desc: "Steampunk D&B.", img: "crosscl.jpg" },
             { id: "p_p2", city: "Prag", cat: "Party", subtag: "bar", title: "Hemingway Bar", cost: 40, time: "2h", res: "Zwingend", address: "Karolíny Světlé 26, 110 00 Prag", desc: "Absinth-Cocktails.", img: "hemingwayba.jpg" },
-            { id: "p_p3", city: "Prag", cat: "Party", subtag: "bar", title: "Anonymous Bar", cost: 30, time: "2h", res: "Empfohlen", address: "Michalská 12, 110 00 Prag", desc: "Hidden Bar.", img: "anonymousba.jpg" },
-            { id: "p_p4", city: "Prag", cat: "Party", subtag: "bar", title: "U Sudu", cost: 10, time: "Open End", res: "Nein", address: "Vodičkova 677/10, 110 00 Prag", desc: "Höhlenbar.", img: "usu.jpg" },
+            { id: "p_p3", city: "Prag", cat: "Party", subtag: "bar", title: "Anonymous Bar", cost: 30, time: "2h", res: "Empfohlen", address: "Michalská 12, 110 00 Prag", desc: "Hidden Bar. Guy Fawkes Thema.", img: "anonymousba.jpg" },
+            { id: "p_p4", city: "Prag", cat: "Party", subtag: "bar", title: "U Sudu", cost: 10, time: "Open End", res: "Nein", address: "Vodičkova 677/10, 110 00 Prag", desc: "Höhlenbar/Weinkeller. Labyrinth.", img: "usu.jpg" },
             { id: "p_p5", city: "Prag", cat: "Party", subtag: "bar", title: "Jazz Dock", cost: 25, time: "2h", res: "Ticket", address: "Janáčkovo nábř. 3249/2, 150 00 Prag", desc: "Direkt auf dem Wasser.", img: "jazzdo.jpg" },
-            { id: "p_p6", city: "Prag", cat: "Party", subtag: "bar", title: "Black Angel's", cost: 40, time: "2h", res: "Nein", address: "Staroměstské nám. 29, 110 00 Prag", desc: "Gothic.", img: "blackan.jpg" },
-            { id: "p_p7", city: "Prag", cat: "Party", subtag: "club", title: "Karlovy Lazne", cost: 25, time: "Bis 05:00", res: "Nein", address: "Novotného lávka 198/5, 110 00 Prag", desc: "5-Stock.", img: "karlovyla.jpg" },
+            { id: "p_p6", city: "Prag", cat: "Party", subtag: "bar", title: "Black Angel's", cost: 40, time: "2h", res: "Nein", address: "Staroměstské nám. 29, 110 00 Prag", desc: "Gothic Bar im Keller am Altstädter Ring.", img: "blackan.jpg" },
+            { id: "p_p7", city: "Prag", cat: "Party", subtag: "club", title: "Karlovy Lazne", cost: 25, time: "Bis 05:00", res: "Nein", address: "Novotného lávka 198/5, 110 00 Prag", desc: "5-Stock Disco. Sehr touristisch.", img: "karlovyla.jpg" },
             { id: "p_p8", city: "Prag", cat: "Party", subtag: "club", title: "Paul Simon Konzert", cost: 90, time: "Event", res: "Ticket", address: "Kongresszentrum, Prag", desc: "Konzert.", img: "" }, 
             { id: "p_p9", city: "Prag", cat: "Party", subtag: "club", title: "Epic Prague", cost: 25, time: "Bis 05:00", res: "Ticket", address: "Revoluční 1003/3, 110 00 Prag", desc: "EDM.", img: "epicpr.jpg" }
         ];
@@ -408,50 +398,50 @@
 
             return (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-enter" onClick={onClose}>
-                    <div className="bg-white rounded-3xl w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl relative flex flex-col" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl p-6 relative" onClick={e => e.stopPropagation()}>
                         
-                        <div className="p-5 border-b border-rose-100 flex justify-between items-center bg-rose-50/50">
-                            <h2 className="text-lg font-bold text-rose-900">Alternativen zu "{currentItem.title}"</h2>
-                            <button onClick={onClose} className="p-2 hover:bg-rose-100 rounded-full transition-colors"><Icon name="x" className="w-5 h-5 text-rose-400"/></button>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold text-slate-900">
+                                Alternativen zu <span className="text-indigo-600">"{currentItem.title}"</span>
+                            </h2>
+                            <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><Icon name="x" className="w-6 h-6"/></button>
                         </div>
 
-                        <div className="p-6 overflow-y-auto flex-1 custom-scroll bg-white">
-                            <div className="space-y-3">
-                                {alternatives.length > 0 ? alternatives.map(alt => (
-                                    <div key={alt.id} className="border border-rose-100 rounded-2xl p-4 hover:border-rose-300 hover:shadow-md transition-all bg-white">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <h4 className="font-bold text-slate-800">{alt.title}</h4>
-                                            <span className="text-xs font-mono font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-lg">{alt.cost}.-</span>
-                                        </div>
-                                        <p className="text-xs text-slate-500 mb-2 line-clamp-2">{alt.desc}</p>
-                                        <div className="flex gap-3 text-[10px] text-slate-400 font-bold uppercase tracking-wide">
-                                            <span className="flex items-center gap-1"><Icon name="clock" className="w-3 h-3"/> {alt.time}</span>
-                                            <span className="text-amber-600">{alt.res}</span>
-                                        </div>
+                        <div className="space-y-3 mb-6">
+                            {alternatives.length > 0 ? alternatives.map(alt => (
+                                <div key={alt.id} className="border border-slate-100 rounded-xl p-4 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col cursor-default">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h4 className="font-bold text-slate-800">{alt.title}</h4>
+                                        <span className="text-xs font-mono font-bold text-slate-500">{alt.cost} CHF</span>
                                     </div>
-                                )) : (
-                                    <div className="text-center py-10 text-slate-400">Keine direkten Matches.</div>
-                                )}
-                            </div>
+                                    <p className="text-xs text-slate-500 mb-2 line-clamp-2">{alt.desc}</p>
+                                    <div className="flex gap-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                        <span className="flex items-center gap-1"><Icon name="clock" className="w-3 h-3"/> {alt.time}</span>
+                                        <span className="text-amber-600">{alt.res}</span>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="text-center py-8 text-slate-400">
+                                    <p>Keine direkten Matches gefunden.</p>
+                                </div>
+                            )}
                         </div>
 
-                        <div className="p-5 border-t border-rose-100 bg-slate-50">
-                            <button 
-                                onClick={openWebSearch}
-                                className="w-full py-3 bg-white text-rose-600 text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-rose-50 transition-colors border-2 border-rose-100 shadow-sm"
-                            >
-                                <Icon name="search" className="w-4 h-4"/> 
-                                Google nach Weiterem fragen
-                            </button>
-                        </div>
+                        <button 
+                            onClick={openWebSearch}
+                            className="w-full py-3 bg-slate-100 text-slate-600 text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors"
+                        >
+                            <Icon name="search" className="w-4 h-4"/> 
+                            Google nach Weiterem fragen
+                        </button>
                     </div>
                 </div>
             );
         };
 
         const Card = ({ item, onShowAlternatives, toggleFav, isFav }) => {
-            // Local state for FX toggle per card
             const [showLocal, setShowLocal] = useState(false);
+            const [imgError, setImgError] = useState(false);
 
             const imagePath = `images/${item.img}`;
 
@@ -485,7 +475,6 @@
                 return `${val} ${currency}`;
             };
 
-            // Theme Color Logic
             let themeClass = "border-slate-200";
             let btnClass = "bg-slate-900 hover:bg-slate-800";
             if (item.city === "Budapest") { themeClass = "border-rose-200"; btnClass = "bg-rose-600 hover:bg-rose-700"; }
@@ -493,17 +482,19 @@
             if (item.city === "Prag") { themeClass = "border-emerald-200"; btnClass = "bg-emerald-600 hover:bg-emerald-700"; }
             if (item.city === "Transfer") { themeClass = "border-indigo-200"; btnClass = "bg-indigo-600 hover:bg-indigo-700"; }
 
+
             return (
                 <div className={`bg-white rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
                     
                     {/* Header Image Area */}
                     <div className="h-44 relative bg-slate-100 overflow-hidden">
-                        {item.img ? (
-                            <img src={imagePath} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                        ) : null}
-                        <div className="img-fallback" style={{display: item.img ? 'none' : 'flex'}}>
-                            {item.title.substring(0, 2).toUpperCase()}
-                        </div>
+                        {!imgError && item.img ? (
+                            <img src={imagePath} alt={item.title} className="w-full h-full object-cover transition-opacity duration-300" onError={() => setImgError(true)} />
+                        ) : (
+                            <div className="img-fallback" style={{display: 'flex', backgroundColor: '#e2e8f0', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontWeight: 700, fontSize: '1.5rem', width: '100%', height: '100%'}}>
+                                {item.title.substring(0, 2).toUpperCase()}
+                            </div>
+                        )}
                         <div className="absolute top-2 right-2 flex gap-1">
                             <span className="bg-white/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-slate-900 shadow-sm backdrop-blur-sm">{item.cat}</span>
                         </div>
@@ -557,7 +548,7 @@
                             {item.cat !== 'Transport' && (
                                 <button 
                                     onClick={() => onShowAlternatives(item)}
-                                    className={`w-full py-2.5 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-md ${btnClass}`}
+                                    className={`w-full py-2.5 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition-all shadow-md ${btnClass}`}
                                 >
                                     <Icon name="sparkles" className="w-3 h-3 text-white/70"/> 
                                     Alternativen
@@ -575,10 +566,11 @@
             const [modalOpen, setModalOpen] = useState(false);
             const [modalItem, setModalItem] = useState(null);
             
-            // Persistent Favs
             const [favs, setFavs] = useState(() => {
-                const saved = localStorage.getItem('trip_favs');
-                return saved ? JSON.parse(saved) : [];
+                try {
+                    const saved = localStorage.getItem('trip_favs');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) { return []; }
             });
 
             useEffect(() => {
@@ -605,7 +597,6 @@
                 setModalOpen(true);
             };
 
-            // Trip Progress Logic
             const [progress, setProgress] = useState(0);
             const [daysLeft, setDaysLeft] = useState(0);
             useEffect(() => {
@@ -627,11 +618,11 @@
 
             return (
                 <div className="min-h-screen max-w-7xl mx-auto pb-20">
-                    <header className="bg-white/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100">
+                    <header className="bg-white/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-slate-200 rounded-b-3xl shadow-sm mb-6">
                         <div className="flex flex-col gap-4 max-w-7xl mx-auto">
                             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                                 <div>
-                                    <h1 className="text-2xl font-black tracking-tighter text-rose-950 flex items-center gap-2">
+                                    <h1 className="text-xl font-bold tracking-tighter text-rose-900 flex items-center gap-2">
                                         Bingus & Amor <span className="bg-rose-100 text-rose-600 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
                                     </h1>
                                     <p className="text-xs text-rose-400 mt-1 font-bold">
@@ -654,19 +645,18 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                        
-                        {/* Progress Bar */}
-                        <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-100">
-                            <div className="h-full bg-gradient-to-r from-rose-300 via-amber-300 to-emerald-300 transition-all duration-1000" style={{width: `${progress}%`}}></div>
+                            
+                            <div className="w-full h-1.5 bg-slate-100 rounded-full mt-1 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-300 via-amber-300 to-emerald-300 transition-all duration-1000" style={{width: `${progress}%`}}></div>
+                            </div>
                         </div>
                     </header>
 
                     {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
-                        <div className="px-6 py-4 bg-white/30 border-b border-rose-100 sticky top-[135px] z-40 overflow-x-auto backdrop-blur-sm">
+                        <div className="px-6 py-3 bg-white border-b border-slate-100 sticky top-[73px] z-40 overflow-x-auto mb-6 rounded-xl mx-4 shadow-sm">
                             <div className="flex gap-2 justify-center md:justify-start max-w-7xl mx-auto">
                                 {["Alle", "Essen", "Aktivität", "Party"].map(cat => (
-                                    <button key={cat} onClick={() => setCatFilter(cat)} className={`px-4 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${catFilter === cat ? 'bg-rose-900 text-white border-rose-900 shadow-md transform scale-105' : 'bg-white text-slate-500 border-slate-200 hover:border-rose-300'}`}>{cat}</button>
+                                    <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1 rounded-full text-[11px] font-bold border transition-colors ${catFilter === cat ? 'bg-rose-900 text-white border-rose-900' : 'bg-white text-slate-500 border-slate-200 hover:border-rose-300'}`}>{cat}</button>
                                 ))}
                             </div>
                         </div>
