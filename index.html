@@ -227,12 +227,12 @@
             { id: "p_f21", city: "Prag", cat: "Essen", subtag: "street", title: "Burrito Loco", cost: 10, time: "15min", res: "Nein", address: "Štefánikova 230/7, 150 00 Prag", desc: "Burritos.", img: "burritolo.jpg" },
             { id: "p_f22", city: "Prag", cat: "Essen", subtag: "casual", title: "Bistro Monk", cost: 30, time: "1h", res: "Empfohlen", address: "Michalská 20, 110 00 Prag", desc: "Sehr beliebtes Frühstück.", img: "bistromo.jpg" },
             { id: "p_f23", city: "Prag", cat: "Essen", subtag: "casual", title: "Venue", cost: 30, time: "1h", res: "Nein", address: "Havelská 4, 110 00 Prag", desc: "Tolle Brunch-Teller.", img: "venue.jpg" },
-            { id: "p_f24", city: "Prag", cat: "Essen", subtag: "street", title: "Bakeshop", cost: 25, time: "30min", res: "Nein", address: "Kozí 1, 110 00 Prag", desc: "Dlouhá Straße. Backwaren.", img: "bakeshop.jpg" },
+            { id: "p_f24", city: "Prag", cat: "Essen", subtag: "street", title: "Bakeshop", cost: 25, time: "30min", res: "Nein", address: "Kozí 1, 110 00 Prag", desc: "Bäckerei.", img: "bakeshop.jpg" },
             { id: "p_f25", city: "Prag", cat: "Essen", subtag: "fine", title: "Café Savoy", cost: 40, time: "1.5h", res: "Empfohlen", address: "Vítězná 5, 150 00 Prag", desc: "Imperial.", img: "cafsa.jpg" },
-            { id: "p_f26", city: "Prag", cat: "Essen", subtag: "street", title: "Super Tramp Coffee", cost: 10, time: "30min", res: "Nein", address: "Opatovická 160/18, 110 00 Prag", desc: "Versteckt.", img: "supertr.jpg" },
+            { id: "p_f26", city: "Prag", cat: "Essen", subtag: "street", title: "Super Tramp Coffee", cost: 10, time: "30min", res: "Nein", address: "Opatovická 160/18, 110 00 Prag", desc: "Kaffee.", img: "supertr.jpg" },
             { id: "p_f27", city: "Prag", cat: "Essen", subtag: "street", title: "Coffee Room", cost: 15, time: "45min", res: "Nein", address: "Korunní 74, 101 00 Prag", desc: "Avocado Toast.", img: "coffeero.jpg" },
-            { id: "p_f28", city: "Prag", cat: "Essen", subtag: "casual", title: "U Kroka", cost: 25, time: "1.5h", res: "Zwingend", address: "Vratislavova 12/28, 128 00 Prag", desc: "Abseits, Top Preis.", img: "ukr.jpg" },
-            { id: "p_f29", city: "Prag", cat: "Essen", subtag: "fine", title: "Lehká Hlava", cost: 30, time: "1.5h", res: "Empfohlen", address: "Boršov 280/2, 110 00 Prag", desc: "Vegetarisch.", img: "lehkhl.jpg" },
+            { id: "p_f28", city: "Prag", cat: "Essen", subtag: "casual", title: "U Kroka", cost: 25, time: "1.5h", res: "Zwingend", address: "Vratislavova 12/28, 128 00 Prag", desc: "Abseits des Zentrums. Top Preis.", img: "ukr.jpg" },
+            { id: "p_f29", city: "Prag", cat: "Essen", subtag: "fine", title: "Lehká Hlava", cost: 30, time: "1.5h", res: "Empfohlen", address: "Boršov 280/2, 110 00 Prag", desc: "Vegetarisch, spacig.", img: "lehkhl.jpg" },
 
             // --- PRAG AKTIVITÄT ---
             { id: "p_a1", city: "Prag", cat: "Aktivität", subtag: "relax", title: "Bier Spa Bernard", cost: 90, time: "1h", res: "Zwingend", address: "Týn 10, 110 00 Prag", desc: "Baden in Bier.", img: "biersp.jpg" },
@@ -524,12 +524,75 @@
                 </div>
             );
         };
+        
+        const TripCalendar = () => {
+            const initialDays = Array.from({ length: 10 }, (_, i) => {
+                const date = new Date(2026, 3, 1 + i); 
+                const dayStr = date.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+                let city = "Budapest 🇭🇺";
+                if (i >= 3 && i < 6) city = "Wien 🇦🇹";
+                if (i >= 6) city = "Prag 🇨🇿";
+                if (i === 3) city = "Budapest ➡️ Wien";
+                if (i === 6) city = "Wien ➡️ Prag";
+
+                return { id: i, date: dayStr, city, slots: { mor: "", aft: "", eve: "", nht: "" } };
+            });
+
+            const [days, setDays] = useState(() => {
+                const saved = localStorage.getItem('trip_calendar');
+                return saved ? JSON.parse(saved) : initialDays;
+            });
+
+            useEffect(() => {
+                localStorage.setItem('trip_calendar', JSON.stringify(days));
+            }, [days]);
+
+            const updateSlot = (dayId, slot, value) => {
+                setDays(prev => prev.map(d => d.id === dayId ? { ...d, slots: { ...d.slots, [slot]: value } } : d));
+            };
+
+            return (
+                <div className="p-4 pb-20 fade-in">
+                    <h2 className="text-xl font-bold mb-6 text-center text-rose-900">Dein Reiseplan 📅</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        {days.map(day => (
+                            <div key={day.id} className="bg-white rounded-xl shadow-sm border border-rose-100 overflow-hidden flex flex-col">
+                                <div className="bg-rose-50 p-2 text-center border-b border-rose-100">
+                                    <div className="font-bold text-rose-800">{day.date}</div>
+                                    <div className="text-[10px] text-slate-500 uppercase tracking-wide">{day.city}</div>
+                                </div>
+                                <div className="p-2 space-y-2 flex-1">
+                                    <textarea 
+                                        placeholder="Morgen..." 
+                                        className="w-full text-xs p-2 bg-slate-50 rounded border border-slate-100 resize-none h-16 focus:border-rose-300 outline-none"
+                                        value={day.slots.mor}
+                                        onChange={(e) => updateSlot(day.id, 'mor', e.target.value)}
+                                    />
+                                    <textarea 
+                                        placeholder="Nachmittag..." 
+                                        className="w-full text-xs p-2 bg-slate-50 rounded border border-slate-100 resize-none h-16 focus:border-rose-300 outline-none"
+                                        value={day.slots.aft}
+                                        onChange={(e) => updateSlot(day.id, 'aft', e.target.value)}
+                                    />
+                                    <textarea 
+                                        placeholder="Abend..." 
+                                        className="w-full text-xs p-2 bg-slate-50 rounded border border-slate-100 resize-none h-16 focus:border-rose-300 outline-none"
+                                        value={day.slots.eve}
+                                        onChange={(e) => updateSlot(day.id, 'eve', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
 
         const Card = ({ item, onShowAlternatives, toggleFav, isFav }) => {
             const [showLocal, setShowLocal] = useState(false);
             const [imgError, setImgError] = useState(false);
 
-            const imagePath = `images/${item.img}`;
+            const imagePath = `${item.img}`;
 
             const openSearch = (platform) => {
                 const query = item.cat === "Transport" && item.city === "Transfer" 
@@ -578,7 +641,6 @@
             if (item.city === "Wien") { themeClass = "border-amber-200"; btnClass = "bg-amber-600 hover:bg-amber-700"; }
             if (item.city === "Prag") { themeClass = "border-emerald-200"; btnClass = "bg-emerald-600 hover:bg-emerald-700"; }
             if (item.city === "Transfer") { themeClass = "border-indigo-200"; btnClass = "bg-indigo-600 hover:bg-indigo-700"; }
-
 
             return (
                 <div className={`bg-white rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
@@ -708,8 +770,9 @@
                 const end = new Date('2026-04-10T23:59:59').getTime();
                 const now = new Date().getTime(); 
                 
-                const diff = start - now;
-                setDaysLeft(Math.ceil(diff / (1000 * 60 * 60 * 24)));
+                const diffTime = start - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                setDaysLeft(diffDays);
 
                 if (now < start) {
                     setProgress(0);
@@ -729,7 +792,7 @@
 
             return (
                 <div className="min-h-screen max-w-7xl mx-auto pb-20">
-                    <header className="bg-white/90 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100 shadow-sm mb-6 rounded-b-[30px]">
+                    <header className="bg-white/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100 shadow-sm mb-6 rounded-b-[30px]">
                         <div className="flex flex-col gap-4 max-w-7xl mx-auto">
                             <div className="flex flex-row justify-between items-center gap-4">
                                 <div>
