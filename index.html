@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingus & Amor's Trip V27 🚀</title>
+    <title>Bingus & Amor's Trip V28 🚀</title>
     
     <!-- Tailwind CSS with Dark Mode Config -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -153,17 +153,7 @@
             "🍸 Bestellt den Drink mit dem weirdesten Namen auf der Karte.",
             "🗿 Finde eine Skulptur und mache ein sexy Foto damit.",
             "🍻 Ex dein Bier! (Oder sag an, sobald du es machst, damit die andere Person es weiß).",
-            "📸 Mach ein sexy Foto von deinem Partner beim Essen.",
-            "💃 Tanzt für 10 Sekunden an einem öffentlichen Ort (ohne Musik!).",
-            "👀 Starren-Wettbewerb: Wer zuerst lacht, zahlt die nächste Runde.",
-            "🥄 Füttert euch gegenseitig einen Bissen vom Essen (extra kitschig).",
-            "💋 Küsst euch leidenschaftlich an einem Ort mit viel Publikum.",
-            "🛍️ Findet das hässlichste Souvenir und macht ein Foto damit.",
-            "🎤 Summt die Nationalhymne des Landes (oder was ihr dafür haltet).",
-            "🥂 Stoßt auf den besten Sex eures Lebens an (diskret!).",
-            "🤳 Macht ein Video in Slow-Motion, wie ihr einfach nur geht.",
-            "🥨 Teilt euch ein lokales Gebäckstück – Lady and the Tramp Style.",
-            "🦁 Imitiert die berühmteste Statue der Stadt."
+            "📸 Mach ein sexy Foto von deinem Partner beim Essen."
         ];
 
         // --- DATENBANK ---
@@ -345,7 +335,7 @@
         ];
 
         // --- COMPONENTS ---
-        // ... (Icon, Toast unchanged)
+        // ... (Icon, Toast, CurrencyConverter, TikTokIcon, GoogleIcon unchanged)
 
         // [ICONS START]
         const Icon = ({ name, className }) => {
@@ -372,8 +362,6 @@
             );
         };
         // [ICONS END]
-
-        // ... (CurrencyConverter, TikTokIcon, GoogleIcon unchanged)
 
         // [CONVERTER START]
         const CurrencyConverter = () => {
@@ -467,6 +455,10 @@
         const MapView = ({ items, activeCity }) => {
             const mapRef = useRef(null);
             const markersRef = useRef(L.featureGroup());
+            const mapContainerRef = useRef(null);
+            const mapInstanceRef = useRef(null);
+            const markersLayerRef = useRef(null);
+
 
             // Coordinates for cities
             const CITY_COORDS = {
@@ -498,38 +490,51 @@
             };
 
             useEffect(() => {
-                if (!mapRef.current) {
-                    const map = L.map('map-container', { zoomControl: false }).setView(CITY_COORDS["Budapest"], 13);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                        attribution: '&copy; OpenStreetMap',
-                        subdomains: 'abcd',
-                        maxZoom: 20
-                    }).addTo(map);
-                    L.control.zoom({ position: 'bottomright' }).addTo(map);
-                    
-                    // Location Found Event
-                    map.on('locationfound', (e) => {
-                         // Clear existing location markers if any (optional, but cleaner)
-                         // For simplicity, we just add new ones here, or you could track them in a ref
-                         L.circle(e.latlng, { radius: e.accuracy / 2, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1 }).addTo(map);
-                         L.circleMarker(e.latlng, { radius: 8, color: '#fff', fillColor: '#3b82f6', fillOpacity: 1 }).bindPopup("Du bist hier!").addTo(map).openPopup();
-                         map.flyTo(e.latlng, 15);
-                    });
-                     
-                    map.on('locationerror', (e) => {
-                        alert("Standort konnte nicht ermittelt werden. Bitte GPS erlauben.");
-                    });
-                    
-                    mapRef.current = map;
-                }
+                if (mapInstanceRef.current) return;
+
+                const map = L.map(mapContainerRef.current, { zoomControl: false }).setView(CITY_COORDS["Budapest"], 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }).addTo(map);
+                L.control.zoom({ position: 'bottomright' }).addTo(map);
                 
-                const map = mapRef.current;
+                // Location Found Event
+                map.on('locationfound', (e) => {
+                     // Clear existing location markers if any (optional, but cleaner)
+                     // For simplicity, we just add new ones here, or you could track them in a ref
+                     L.circle(e.latlng, { radius: e.accuracy / 2, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1 }).addTo(map);
+                     L.circleMarker(e.latlng, { radius: 8, color: '#fff', fillColor: '#3b82f6', fillOpacity: 1 }).bindPopup("Du bist hier!").addTo(map).openPopup();
+                     map.flyTo(e.latlng, 15);
+                });
+                 
+                map.on('locationerror', (e) => {
+                    alert("Standort konnte nicht ermittelt werden. Bitte GPS erlauben.");
+                });
+                
+                const markers = L.featureGroup().addTo(map);
+                
+                mapInstanceRef.current = map;
+                markersLayerRef.current = markers;
+
+                return () => {
+                    if (mapInstanceRef.current) {
+                        mapInstanceRef.current.remove();
+                        mapInstanceRef.current = null;
+                    }
+                }
+            }, []);
+            
+            useEffect(() => {
+                const map = mapInstanceRef.current;
+                if (!map) return;
                 
                 if (CITY_COORDS[activeCity]) {
                     map.flyTo(CITY_COORDS[activeCity], 13, { duration: 1.5 });
                 }
 
-                const markersLayer = markersRef.current;
+                const markersLayer = markersLayerRef.current;
                 markersLayer.clearLayers();
 
                 items.forEach(item => {
@@ -567,19 +572,17 @@
                     }
                 });
 
-                markersLayer.addTo(map);
-
             }, [items, activeCity]);
 
             const handleLocateMe = () => {
-                if (mapRef.current) {
-                    mapRef.current.locate({setView: true, maxZoom: 16});
+                if (mapInstanceRef.current) {
+                    mapInstanceRef.current.locate({setView: true, maxZoom: 16});
                 }
             };
 
             return (
                 <div className="relative w-full h-full">
-                    <div id="map-container"></div>
+                    <div ref={mapContainerRef} id="map-container"></div>
                     <button 
                         onClick={handleLocateMe}
                         className="absolute top-4 right-4 z-[500] bg-white p-2 rounded-xl shadow-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-white"
@@ -638,56 +641,10 @@
         const ChallengeButton = () => {
             const [showModal, setShowModal] = useState(false);
             const [challenge, setChallenge] = useState("");
-            const [challengeIndex, setChallengeIndex] = useState(0); // 0 or 1 to toggle
-
-            // UPDATED CHALLENGE LIST (20 items)
-            const FULL_CHALLENGES = [
-                "📸 Macht ein Foto, auf dem einer von euch wie ein Tourist-Klischee posiert.",
-                "🎬 Findet einen Aussichtspunkt und macht ein „dramatisches Filmplakat“-Foto.",
-                "😲 Macht ein Foto, als würdet ihr euch gerade zum ersten Mal sehen.",
-                "🍹 Bestellt Getränke füreinander – ohne Absprache.",
-                "🏷️ Gebt euch gegenseitig einen neuen Spitznamen für den restlichen Tag.",
-                "🤪 Versucht, jemanden dazu zu bringen, ein Foto von euch zu machen – aber in einer absurden Pose.",
-                "🍸 Bestellt den Drink mit dem weirdesten Namen auf der Karte.",
-                "🗿 Finde eine Skulptur und mache ein sexy Foto damit.",
-                "🍻 Ex dein Bier! (Oder sag an, wann es soweit ist).",
-                "📸 Mach ein sexy Foto von deinem Partner beim Essen.",
-                "💃 Tanzt für 10 Sekunden an einem öffentlichen Ort (ohne Musik!).",
-                "👀 Starren-Wettbewerb: Wer zuerst lacht, zahlt die nächste Runde.",
-                "🥄 Füttert euch gegenseitig einen Bissen vom Essen (extra kitschig).",
-                "💋 Küsst euch leidenschaftlich an einem Ort mit viel Publikum.",
-                "🛍️ Findet das hässlichste Souvenir und macht ein Foto damit.",
-                "🎤 Summt die Nationalhymne des Landes (oder was ihr dafür haltet).",
-                "🥂 Stoßt auf den besten Sex eures Lebens an (diskret!).",
-                "🤳 Macht ein Video in Slow-Motion, wie ihr einfach nur geht.",
-                "🥨 Teilt euch ein lokales Gebäckstück – Lady and the Tramp Style.",
-                "🦁 Imitiert die berühmteste Statue der Stadt."
-            ];
 
             const handleChallenge = () => {
-                const now = new Date();
-                const startDate = new Date('2026-04-01T00:00:00');
-                
-                // Logic: Before trip -> Static example. During trip -> 2 unique per day.
-                if (now < startDate) {
-                    setChallenge(FULL_CHALLENGES[0]); // Static example
-                } else {
-                    // Calculate days since start (0 to 9)
-                    const diffTime = Math.abs(now - startDate);
-                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
-                    const dayIndex = diffDays % 10; // Ensure within range
-
-                    // Pick 2 challenges based on day index (deterministic but changing daily)
-                    const idx1 = (dayIndex * 2) % FULL_CHALLENGES.length;
-                    const idx2 = (dayIndex * 2 + 1) % FULL_CHALLENGES.length;
-                    
-                    const dailyOptions = [FULL_CHALLENGES[idx1], FULL_CHALLENGES[idx2]];
-                    
-                    // Toggle
-                    const nextIndex = (challengeIndex + 1) % 2;
-                    setChallengeIndex(nextIndex);
-                    setChallenge(dailyOptions[nextIndex]);
-                }
+                const random = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
+                setChallenge(random);
                 setShowModal(true);
             };
 
@@ -707,7 +664,7 @@
                                 <div className="text-4xl mb-4">🎲</div>
                                 <h3 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2">Daily Challenge</h3>
                                 <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">
-                                    {new Date() < new Date('2026-04-01') ? "Vorgeschmack (Noch nicht im Urlaub!):" : "Eure Challenge für heute:"}
+                                    Vorgeschmack für Bingus & Amor:
                                 </p>
                                 <div className="bg-rose-50 dark:bg-slate-700 p-4 rounded-xl border border-rose-100 dark:border-slate-600 mb-6">
                                     <p className="font-bold text-lg text-slate-800 dark:text-white leading-relaxed">"{challenge}"</p>
@@ -855,10 +812,12 @@
                 };
 
                 updateProgress();
+                // Update every minute to allow "live" movement if page stays open
                 const interval = setInterval(updateProgress, 60000);
                 return () => clearInterval(interval);
             }, []);
 
+            // Days array for rendering grid
             const days = [
                 { date: '01.04', label: 'Mi' },
                 { date: '02.04', label: 'Do' },
@@ -887,7 +846,14 @@
 
                         {/* PROGRESS BAR TRACK */}
                         <div className="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner mt-1">
-                            {/* ACTIVE FILL - Solid Color */}
+                            {/* SEGMENTS BACKGROUND */}
+                            <div className="absolute inset-0 flex h-full opacity-30">
+                                <div className="w-[30%] bg-rose-300"></div> {/* Budapest 3 days */}
+                                <div className="w-[30%] bg-amber-300"></div> {/* Vienna 3 days */}
+                                <div className="w-[40%] bg-emerald-300"></div> {/* Prague 4 days */}
+                            </div>
+                            
+                            {/* ACTIVE FILL */}
                             <div className="h-full bg-rose-500 dark:bg-rose-600 transition-all duration-1000 ease-linear shadow-lg relative z-10" style={{width: `${progress}%`}}></div>
                         </div>
 
@@ -904,7 +870,100 @@
             );
         };
 
-        // --- StaticAlternativesModal (wieder da!) ---
+
+        // --- TripCalendar (Missing previously) ---
+        const TripCalendar = () => {
+            const initialDays = Array.from({ length: 10 }, (_, i) => {
+                const date = new Date(2026, 3, 1 + i); 
+                const dayStr = date.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+                let city = "Budapest 🇭🇺";
+                let defaultSlots = { mor: "", aft: "", eve: "", nht: "" };
+
+                if (i === 0) { 
+                    defaultSlots.eve = "🛬 Landung 20:10 (EZS1213)";
+                    defaultSlots.nht = "Check-in (ab 15:00)";
+                } else if (i === 3) { 
+                    city = "Budapest ➡️ Wien";
+                    defaultSlots.mor = "Checkout BUD (bis 10:00)";
+                    defaultSlots.aft = "Zug nach Wien";
+                    defaultSlots.eve = "Check-in VIE (ab 15:00)";
+                } else if (i > 3 && i < 6) {
+                    city = "Wien 🇦🇹";
+                } else if (i === 6) { 
+                    city = "Wien ➡️ Prag";
+                    defaultSlots.mor = "Checkout VIE (bis 12:00)";
+                    defaultSlots.aft = "Zug nach Prag";
+                    defaultSlots.eve = "Check-in PRG (~15:00)";
+                } else if (i > 6) {
+                    city = "Prag 🇨🇿";
+                    if (i === 9) { 
+                        defaultSlots.eve = "🛫 Abflug 19:00 (EJU7572)";
+                    }
+                }
+
+                return { id: i, date: dayStr, city, slots: defaultSlots };
+            });
+
+            const [days, setDays] = useState(() => {
+                const saved = localStorage.getItem('trip_calendar_v2'); 
+                return saved ? JSON.parse(saved) : initialDays;
+            });
+
+            useEffect(() => {
+                localStorage.setItem('trip_calendar_v2', JSON.stringify(days));
+            }, [days]);
+
+            const updateSlot = (dayId, slot, value) => {
+                setDays(prev => prev.map(d => d.id === dayId ? { ...d, slots: { ...d.slots, [slot]: value } } : d));
+            };
+
+            const resetCalendar = () => {
+                if(confirm("Kalender zurücksetzen? Alle eigenen Einträge gehen verloren.")) {
+                    setDays(initialDays);
+                }
+            };
+
+            return (
+                <div className="p-4 pb-20 fade-in">
+                    <div className="flex justify-center items-center mb-6 gap-4">
+                         <h2 className="text-xl font-bold text-rose-900 dark:text-rose-400">Dein Reiseplan 📅</h2>
+                         <button onClick={resetCalendar} className="text-[10px] text-slate-400 underline">Reset</button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        {days.map(day => (
+                            <div key={day.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-rose-100 dark:border-slate-700 overflow-hidden flex flex-col">
+                                <div className="bg-rose-50 dark:bg-slate-700 p-2 text-center border-b border-rose-100 dark:border-slate-600">
+                                    <div className="font-bold text-rose-800 dark:text-rose-300">{day.date}</div>
+                                    <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wide">{day.city}</div>
+                                </div>
+                                <div className="p-2 space-y-2 flex-1">
+                                    <textarea 
+                                        placeholder="Morgen..." 
+                                        className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 resize-none h-16 focus:border-rose-300 outline-none text-slate-800 dark:text-slate-200"
+                                        value={day.slots.mor}
+                                        onChange={(e) => updateSlot(day.id, 'mor', e.target.value)}
+                                    />
+                                    <textarea 
+                                        placeholder="Nachmittag..." 
+                                        className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 resize-none h-16 focus:border-rose-300 outline-none text-slate-800 dark:text-slate-200"
+                                        value={day.slots.aft}
+                                        onChange={(e) => updateSlot(day.id, 'aft', e.target.value)}
+                                    />
+                                    <textarea 
+                                        placeholder="Abend..." 
+                                        className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 resize-none h-16 focus:border-rose-300 outline-none text-slate-800 dark:text-slate-200"
+                                        value={day.slots.eve}
+                                        onChange={(e) => updateSlot(day.id, 'eve', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
         const StaticAlternativesModal = ({ isOpen, onClose, currentItem }) => {
             const [alternatives, setAlternatives] = useState([]);
 
@@ -1308,7 +1367,7 @@
                                      {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
                                          <div className="flex gap-2 ml-auto items-center">
                                              {["Alle", "Essen", "Aktivität", "Party", "Hotel"].map(cat => (
-                                                 <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1 rounded-full text-[10px] font-bold border transition-colors ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>{cat}</button>
+                                                 <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1 rounded-full text-[10px] font-bold border transition-colors whitespace-nowrap ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>{cat}</button>
                                              ))}
                                              <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
                                              <div className="flex-shrink-0"><FoodRoulette city={cityFilter} toggleFav={toggleFav} /></div>
