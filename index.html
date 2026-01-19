@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingus & Amor's Trip V35 🚀</title>
+    <title>Bingus & Amor's Trip V37 🚀</title>
     
-    <!-- Tailwind CSS with Dark Mode & Drunk Mode Config -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -23,12 +23,12 @@
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'bounce-slow': 'bounce 2s infinite',
-                        'wobble': 'wobble 1s ease-in-out infinite',
+                        'wobble': 'wobble 2s infinite ease-in-out',
                     },
                     keyframes: {
                         wobble: {
-                            '0%, 100%': { transform: 'rotate(-3deg)' },
-                            '50%': { transform: 'rotate(3deg)' },
+                            '0%, 100%': { transform: 'rotate(-2deg)' },
+                            '50%': { transform: 'rotate(2deg)' },
                         }
                     }
                 }
@@ -61,28 +61,17 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Drunk Mode Styles */
+        /* Drunk Mode Global Overrides */
         body.drunk-mode {
             background-color: #000 !important;
+            background-image: none !important;
             color: #39ff14 !important;
             font-family: 'Fredoka', cursive !important;
-            overflow-x: hidden;
         }
-        body.drunk-mode * {
-            border-color: #ff00ff !important;
+        body.drunk-mode .map-tiles {
+            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
         }
-        body.drunk-mode h1, body.drunk-mode h2, body.drunk-mode h3 {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: wobble 2s infinite ease-in-out;
-            color: #ff00ff !important;
-            text-shadow: 2px 2px 0px #39ff14;
-        }
-        body.drunk-mode .card-hover {
-            transform: scale(1.02) rotate(1deg);
-            background: #111 !important;
-        }
-
+        
         .bg-pattern-light {
             background-color: #fff1f2;
             background-image: 
@@ -106,15 +95,6 @@
         .modal-enter { animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         @keyframes modalPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
-        /* Badges */
-        .badge-res-high { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-        .badge-res-med { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
-        .badge-res-low { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        
-        .dark .badge-res-high { background-color: #450a0a; color: #fecaca; border-color: #7f1d1d; }
-        .dark .badge-res-med { background-color: #431407; color: #fed7aa; border-color: #7c2d12; }
-        .dark .badge-res-low { background-color: #052e16; color: #bbf7d0; border-color: #14532d; }
-
         .card-hover { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .card-hover:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 15px 30px -5px rgba(251, 113, 133, 0.2); z-index: 10; }
 
@@ -149,13 +129,17 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 20px; }
         .dark .custom-scroll::-webkit-scrollbar-thumb { background: #475569; }
 
-        /* Animation Keyframes */
         .beer-cursor { transition: left 1s linear; will-change: left; }
-        .heart-active { animation: heartPop 0.3s ease-out forwards; }
-        @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-
         .toast-enter { animation: toastUp 0.3s ease-out forwards; }
         @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        
+        /* Badges */
+        .badge-res-high { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .badge-res-med { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+        .badge-res-low { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .dark .badge-res-high { background-color: #450a0a; color: #fecaca; border-color: #7f1d1d; }
+        .dark .badge-res-med { background-color: #431407; color: #fed7aa; border-color: #7c2d12; }
+        .dark .badge-res-low { background-color: #052e16; color: #bbf7d0; border-color: #14532d; }
     </style>
 </head>
 <body class="transition-colors duration-300">
@@ -188,15 +172,10 @@
 
         // --- DATENBANK ---
         const DB = [
-            // --- HOTELS ---
             { id: "h1", lat: 47.4965, lng: 19.0629, city: "Budapest", cat: "Hotel", subtag: "hotel", title: "Quiet Retreat", cost: "???", time: "Check-in 15:00", res: "Gebucht", address: "Kazinczy utca 11, 1075 Budapest", desc: "Direkt neben Szimpla Kert. Mitten im Geschehen, aber ruhig.", img: "hotelbuda.jpg" },
             { id: "h2", lat: 48.1936, lng: 16.3547, city: "Wien", cat: "Hotel", subtag: "hotel", title: "Hotel Indigo Naschmarkt", cost: "???", time: "Check-in 15:00", res: "Gebucht", address: "Rechte Wienzeile 87, 1050 Wien", desc: "Design Hotel direkt am Naschmarkt. Hidden Garden.", img: "hotelwien.jpg" },
-            
-            // TRANSFER
             { id: "t1", lat: 47.5004, lng: 19.0840, city: "Transfer", cat: "Transport", subtag: "train", title: "RegioJet Business Class", cost: 40, time: "2h 40min", res: "Zwingend", address: "Budapest-Keleti, 1087 Budapest", desc: "Route: Budapest -> Wien. 4er-Abteil, Ledersessel. Gratis Sekt/Kaffee.", img: "regiojetbu.jpg" },
             { id: "t2", lat: 48.1850, lng: 16.3779, city: "Transfer", cat: "Transport", subtag: "train", title: "ÖBB Railjet Business", cost: 80, time: "4h 05min", res: "Zwingend", address: "Wien Hbf, 1100 Wien", desc: "Route: Wien -> Prag. Upgrade zur 1. Klasse. Extrem ruhig.", img: "regiojetbu.jpg" },
-
-            // BUDAPEST - ESSEN
             { id: "b_f1", lat: 47.5040, lng: 19.0628, city: "Budapest", cat: "Essen", subtag: "casual", title: "Menza Étterem", cost: 35, time: "1.5h", res: "Empfohlen", address: "Liszt Ferenc tér 2, 1061 Ungarn", desc: "Retro-70er Style Kantine, gehoben. Sehr lecker.", img: "menzatt.jpg" },
             { id: "b_f2", lat: 47.4975, lng: 19.0635, city: "Budapest", cat: "Essen", subtag: "street", title: "Street Food Karavan", cost: 15, time: "45min", res: "Nein", address: "Kazinczy u. 18, 1075 Ungarn", desc: "Direkt neben Szimpla. Lángos-Burger.", img: "streetfo.jpg" },
             { id: "b_f3", lat: 47.5004, lng: 19.0657, city: "Budapest", cat: "Essen", subtag: "fine", title: "Mazel Tov", cost: 60, time: "2h", res: "Zwingend", address: "Akácfa u. 47, 1072 Ungarn", desc: "Israelische Fusion in schicker Ruine. Tolle Atmosphäre.", img: "mazelto.jpg" },
@@ -449,8 +428,8 @@
                         {/* Beer Index */}
                         <div className="w-px h-8 bg-slate-200 dark:bg-slate-600"></div>
                         <div className="flex flex-col items-center" title="Bier-Index: Wie viel Bier kriegst du für 10 CHF?">
-                             <span className="text-[10px] text-amber-500 font-bold uppercase">🍺 / 10.-</span>
-                             <span className="font-bold">{beersFor10CHF}</span>
+                             <span className="text-[10px] text-amber-500 font-bold uppercase">Bier für 10 CHF</span>
+                             <span className="font-bold text-lg">{beersFor10CHF} 🍺</span>
                         </div>
                     </div>
                 </div>
@@ -541,29 +520,9 @@
                         }
                      });
 
-                     if (nearestName && nearestDist < 5000) { // Only show if < 5km
-                         // Simple Toast for Radar
-                         const radarDiv = document.createElement('div');
-                         radarDiv.className = "leaflet-control leaflet-bar";
-                         radarDiv.style.backgroundColor = "white";
-                         radarDiv.style.padding = "10px";
-                         radarDiv.style.borderRadius = "10px";
-                         radarDiv.style.fontWeight = "bold";
-                         radarDiv.style.color = "#4c0519";
-                         radarDiv.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
-                         radarDiv.innerHTML = `📡 Radar: ${Math.round(nearestDist)}m bis ${nearestName} 🍺`;
-                         
-                         // Clean up old control if exists (simplified)
-                         const oldControl = document.getElementById('radar-control');
-                         if(oldControl) oldControl.remove();
-                         
-                         radarDiv.id = 'radar-control';
-                         const RadarControl = L.Control.extend({
-                             onAdd: () => radarDiv,
-                             onRemove: () => {}
-                         });
-                         map.addControl(new RadarControl({ position: 'topleft' }));
-                     }
+                     // Dispatch custom event to update Radar UI outside map
+                     const event = new CustomEvent('radarUpdate', { detail: { dist: nearestDist, name: nearestName } });
+                     window.dispatchEvent(event);
                 });
                  
                 map.on('locationerror', (e) => {
@@ -595,9 +554,11 @@
                 markersLayer.clearLayers();
 
                 items.forEach(item => {
-                    // Drunk Mode Filter: Show only Hotel + Food (Street/Cafe likely needed) + Party
+                    // Drunk Mode Filter: Show only Hotel + Street Food
                     if (drunkMode) {
-                        if (item.cat === 'Aktivität' || item.cat === 'Transport') return;
+                        const isHotel = item.cat === 'Hotel';
+                        const isStreetFood = item.subtag === 'street';
+                        if (!isHotel && !isStreetFood) return;
                     }
 
                     if (item.lat && item.lng && item.lat !== 0) {
@@ -641,10 +602,32 @@
                     mapInstanceRef.current.locate({setView: true, maxZoom: 16});
                 }
             };
+            
+            const [radarInfo, setRadarInfo] = useState(null);
+            
+            useEffect(() => {
+                const handleRadar = (e) => {
+                    if (e.detail.dist < 5000) {
+                        setRadarInfo(e.detail);
+                    } else {
+                        setRadarInfo(null);
+                    }
+                };
+                window.addEventListener('radarUpdate', handleRadar);
+                return () => window.removeEventListener('radarUpdate', handleRadar);
+            }, []);
 
             return (
                 <div className="relative w-full h-full">
                     <div ref={mapContainerRef} id="map-container"></div>
+                    
+                    {/* Distance Radar Overlay */}
+                    {radarInfo && (
+                        <div className="absolute top-4 left-4 z-[500] bg-white/90 backdrop-blur px-4 py-2 rounded-xl text-sm font-bold text-rose-700 shadow-lg border border-rose-200 animate-pulse">
+                            📡 {Math.round(radarInfo.dist)}m bis {radarInfo.name} 🍺
+                        </div>
+                    )}
+                    
                     <button 
                         onClick={handleLocateMe}
                         className="absolute top-4 right-4 z-[500] bg-white p-2 rounded-xl shadow-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-white"
@@ -696,58 +679,6 @@
                         title="Wörterbuch"
                     >
                         <span className="text-2xl">🗣️</span>
-                    </button>
-                </div>
-            );
-        };
-
-        const AlcoholTrackerButton = () => {
-            const [isOpen, setIsOpen] = useState(false);
-            const [counts, setCounts] = useState({ beer: 0, wine: 0, shots: 0 });
-
-            const updateCount = (type, delta) => {
-                setCounts(prev => ({ ...prev, [type]: Math.max(0, prev[type] + delta) }));
-            };
-
-            const totalDrinks = counts.beer + counts.wine + counts.shots;
-            let status = "Nüchtern";
-            if (totalDrinks > 2) status = "Angewärmt";
-            if (totalDrinks > 5) status = "Gut dabei";
-            if (totalDrinks > 8) status = "Spricht fließend Ungarisch";
-            if (totalDrinks > 12) status = "Kritisch";
-
-            return (
-                <div className="fixed bottom-6 left-6 z-[100] flex flex-col gap-2">
-                   {isOpen && (
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 w-64 border border-rose-100 dark:border-slate-700 mb-2 modal-enter text-slate-800 dark:text-slate-200">
-                             <div className="flex justify-between items-center mb-2 border-b border-rose-100 dark:border-slate-700 pb-1">
-                                <h3 className="font-bold text-rose-900 dark:text-rose-400">Pegel-Rechner 🍺</h3>
-                                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full"><Icon name="x" className="w-4 h-4 text-slate-400"/></button>
-                            </div>
-                            <div className="space-y-3 mb-3">
-                                {Object.entries(counts).map(([type, count]) => (
-                                    <div key={type} className="flex justify-between items-center">
-                                        <span className="capitalize font-medium">{type}</span>
-                                        <div className="flex items-center gap-2">
-                                            <button onClick={() => updateCount(type, -1)} className="w-6 h-6 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold">-</button>
-                                            <span className="w-4 text-center">{count}</span>
-                                            <button onClick={() => updateCount(type, 1)} className="w-6 h-6 bg-rose-100 dark:bg-rose-900 rounded-full flex items-center justify-center font-bold text-rose-600">+</button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="text-center pt-2 border-t border-slate-100 dark:border-slate-700">
-                                <div className="text-xs text-slate-500 uppercase">Status</div>
-                                <div className="font-bold text-rose-500">{status}</div>
-                            </div>
-                        </div>
-                   )}
-                   <button 
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center justify-center"
-                        title="Pegel Tracker"
-                    >
-                        <span className="text-2xl">🍺</span>
                     </button>
                 </div>
             );
@@ -841,126 +772,201 @@
             );
         };
         
-        // --- Food Roulette Component (Consolidated) ---
-        const FoodRoulette = ({ city, toggleFav }) => {
-            const [showModal, setShowModal] = useState(false);
-            const [selectedPlace, setSelectedPlace] = useState(null);
-            const [isSpinning, setIsSpinning] = useState(false);
-            const [added, setAdded] = useState(false);
+        // --- Renamed FoodRouletteButton for consistency ---
+        const FoodRouletteButton = ({ spin }) => (
+             <button 
+                onClick={spin}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                title="Food Roulette"
+            >
+                <span>🎲</span> Hunger?
+            </button>
+        );
 
-            const spin = () => {
-                setIsSpinning(true);
-                setShowModal(true);
-                setAdded(false);
-                
-                const foodPlaces = DB.filter(item => item.city === city && item.cat === 'Essen');
-                
-                let count = 0;
-                const maxCount = 20;
-                const interval = setInterval(() => {
-                    const random = foodPlaces[Math.floor(Math.random() * foodPlaces.length)];
-                    setSelectedPlace(random);
-                    count++;
-                    if(count > maxCount) {
-                        clearInterval(interval);
-                        setIsSpinning(false);
-                    }
-                }, 100);
-            };
+        const AlcoholTrackerButton = ({ onOpen }) => (
+           <button 
+                onClick={onOpen}
+                className="bg-amber-500 hover:bg-amber-600 text-white p-2.5 rounded-2xl shadow-sm transition-all hover:scale-105 flex items-center justify-center"
+                title="Pegel Tracker"
+            >
+                <span className="text-lg">🍺</span>
+            </button>
+        );
 
-            const handleAddToFav = () => {
-                if (selectedPlace) {
-                    toggleFav(selectedPlace.id);
-                    setAdded(true);
-                    setTimeout(() => setShowModal(false), 1500);
+        const AlcoholTrackerModal = ({ isOpen, onClose }) => {
+            const [sessionCounts, setSessionCounts] = useState({ beer: 0, wine: 0, shots: 0, cocktails: 0 });
+            const [totalCounts, setTotalCounts] = useState({ beer: 0, wine: 0, shots: 0, cocktails: 0 });
+
+            // Load totals from local storage on mount
+            useEffect(() => {
+                const savedTotals = localStorage.getItem('alcohol_stats_total');
+                if (savedTotals) {
+                    setTotalCounts(JSON.parse(savedTotals));
+                }
+            }, []);
+
+            // Save totals whenever they change
+            useEffect(() => {
+                localStorage.setItem('alcohol_stats_total', JSON.stringify(totalCounts));
+            }, [totalCounts]);
+
+            const updateCount = (type, delta) => {
+                // Update session
+                const newSessionVal = Math.max(0, sessionCounts[type] + delta);
+                setSessionCounts(prev => ({ ...prev, [type]: newSessionVal }));
+                
+                // Update total (only add if delta > 0, subtract if delta < 0 and session > 0)
+                if (delta > 0) {
+                     setTotalCounts(prev => ({ ...prev, [type]: prev[type] + 1 }));
+                } else if (delta < 0 && sessionCounts[type] > 0) {
+                     // Correction logic: remove from total if removing from session
+                     setTotalCounts(prev => ({ ...prev, [type]: Math.max(0, prev[type] - 1) }));
                 }
             };
 
-            if (city === 'Transfer') return null;
+            const resetSession = () => {
+                if(confirm("Neuer Tag starten? Die 'Heute' Zähler werden zurückgesetzt, aber der 'Total Trip' bleibt.")) {
+                    setSessionCounts({ beer: 0, wine: 0, shots: 0, cocktails: 0 });
+                }
+            };
+
+            const totalDrinks = sessionCounts.beer + sessionCounts.wine + sessionCounts.shots + sessionCounts.cocktails;
+            let status = "Nüchtern";
+            if (totalDrinks > 0) status = "Warmup 🏎️";
+            if (totalDrinks > 2) status = "Leicht einen sitzen 🥴";
+            if (totalDrinks > 4) status = "Gut dabei 🥳";
+            if (totalDrinks > 6) status = "Spricht fließend Ungarisch 🇭🇺";
+            if (totalDrinks > 8) status = "Ruft den Ex an (Nein, Spaß!) 📞";
+            if (totalDrinks > 10) status = "Amor muss tragen 💘";
+            if (totalDrinks > 12) status = "GAME OVER 💀";
+
+            if (!isOpen) return null;
 
             return (
-                <>
-                    <button 
-                        onClick={spin}
-                        className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                        title="Food Roulette"
-                    >
-                        <span>🎲</span> Hunger?
-                    </button>
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={onClose}>
+                     <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 shadow-2xl relative border-4 border-rose-200 dark:border-rose-900" onClick={e => e.stopPropagation()}>
+                        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
+                        
+                        <h3 className="text-xl font-bold text-rose-900 dark:text-rose-400 mb-6 text-center">Pegel-Rechner 🍺</h3>
+                        
+                        {/* Headers */}
+                         <div className="flex justify-between px-3 mb-2 text-[10px] uppercase font-bold text-slate-400">
+                             <span>Drink</span>
+                             <div className="flex gap-4">
+                                 <span>Heute</span>
+                                 <span>Total</span>
+                             </div>
+                         </div>
 
-                    {showModal && (
-                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={() => setShowModal(false)}>
-                            <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full z-10"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
-                                
-                                <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
-                                
-                                {selectedPlace && (
-                                    <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
-                                        <div className="h-48 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner group">
-                                             <img src={selectedPlace.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'} />
-                                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                                             <div className="absolute bottom-2 left-2 text-white font-bold text-sm bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
-                                                {selectedPlace.subtag}
-                                             </div>
+                        <div className="space-y-3 mb-6">
+                            {Object.entries(sessionCounts).map(([type, count]) => (
+                                <div key={type} className="flex justify-between items-center bg-slate-50 dark:bg-slate-700 p-3 rounded-xl">
+                                    <span className="capitalize font-bold text-slate-700 dark:text-slate-200">{type}</span>
+                                    
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2 mr-2">
+                                            <button onClick={() => updateCount(type, -1)} className="w-8 h-8 bg-white dark:bg-slate-600 rounded-full flex items-center justify-center font-bold shadow-sm hover:bg-slate-200">-</button>
+                                            <span className="w-6 text-center font-mono font-bold text-lg">{count}</span>
+                                            <button onClick={() => updateCount(type, 1)} className="w-8 h-8 bg-rose-100 dark:bg-rose-900/50 text-rose-600 rounded-full flex items-center justify-center font-bold shadow-sm hover:bg-rose-200">+</button>
                                         </div>
-                                        
-                                        <h4 className="font-bold text-2xl text-slate-800 dark:text-white mb-2 leading-tight">{selectedPlace.title}</h4>
-                                        
-                                        <div className="flex justify-center gap-2 mb-4">
-                                            <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                                                <Icon name="clock" className="w-3 h-3"/> {selectedPlace.time}
-                                            </span>
-                                            <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
-                                                Res: {selectedPlace.res}
-                                            </span>
-                                        </div>
-
-                                        <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
-                                            {selectedPlace.desc}
-                                        </p>
-                                        
-                                        <div className="font-mono text-2xl text-amber-600 dark:text-amber-400 font-bold mb-6">
-                                            ca. {selectedPlace.cost}.-
-                                        </div>
+                                        <span className="w-8 text-center font-mono text-slate-400 text-sm border-l border-slate-300 pl-2">{totalCounts[type]}</span>
                                     </div>
-                                )}
-                                
-                                <button 
-                                    onClick={handleAddToFav} 
-                                    className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${
-                                        added 
-                                        ? 'bg-green-500 text-white hover:bg-green-600' 
-                                        : 'bg-slate-900 dark:bg-amber-600 text-white hover:bg-slate-800 dark:hover:bg-amber-500'
-                                    }`} 
-                                    disabled={isSpinning}
-                                >
-                                    {isSpinning ? (
-                                        <>
-                                            <Icon name="loader-2" className="w-4 h-4 animate-spin"/>
-                                            Rolling...
-                                        </>
-                                    ) : (
-                                        added ? (
-                                            <>
-                                                <Icon name="check" className="w-4 h-4"/>
-                                                Hinzugefügt! ❤️
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Icon name="heart" className="w-4 h-4"/>
-                                                Zu Favoriten ❤️
-                                            </>
-                                        )
-                                    )}
-                                </button>
-                            </div>
+                                </div>
+                            ))}
                         </div>
-                    )}
-                </>
+                        
+                        <div className="text-center pt-4 border-t border-slate-100 dark:border-slate-700">
+                            <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">Diagnose</div>
+                            <div className="font-black text-lg text-rose-500 animate-pulse mb-4">{status}</div>
+                            
+                            <button 
+                                onClick={resetSession}
+                                className="text-xs text-slate-400 underline hover:text-rose-500"
+                            >
+                                Neuer Tag starten (Reset Heute)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- ADDED FoodRouletteModal ---
+        const FoodRouletteModal = ({ isOpen, onClose, selectedPlace, isSpinning, added, handleAddToFav }) => {
+            if (!isOpen) return null;
+            
+            return (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={onClose}>
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
+                        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full z-10"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
+                        
+                        <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
+                        
+                        {selectedPlace && (
+                            <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
+                                <div className="h-48 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner group">
+                                        <img src={selectedPlace.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                        <div className="absolute bottom-2 left-2 text-white font-bold text-sm bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+                                        {selectedPlace.subtag}
+                                        </div>
+                                </div>
+                                
+                                <h4 className="font-bold text-2xl text-slate-800 dark:text-white mb-2 leading-tight">{selectedPlace.title}</h4>
+                                
+                                <div className="flex justify-center gap-2 mb-4">
+                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                                        <Icon name="clock" className="w-3 h-3"/> {selectedPlace.time}
+                                    </span>
+                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
+                                        Res: {selectedPlace.res}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
+                                    {selectedPlace.desc}
+                                </p>
+                                
+                                <div className="font-mono text-2xl text-amber-600 dark:text-amber-400 font-bold mb-6">
+                                    ca. {selectedPlace.cost}.-
+                                </div>
+                            </div>
+                        )}
+                        
+                        <button 
+                            onClick={handleAddToFav} 
+                            className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${
+                                added 
+                                ? 'bg-green-500 text-white hover:bg-green-600' 
+                                : 'bg-slate-900 dark:bg-amber-600 text-white hover:bg-slate-800 dark:hover:bg-amber-500'
+                            }`} 
+                            disabled={isSpinning}
+                        >
+                            {isSpinning ? (
+                                <>
+                                    <Icon name="loader-2" className="w-4 h-4 animate-spin"/>
+                                    Rolling...
+                                </>
+                            ) : (
+                                added ? (
+                                    <>
+                                        <Icon name="check" className="w-4 h-4"/>
+                                        Hinzugefügt! ❤️
+                                    </>
+                                ) : (
+                                    <>
+                                        <Icon name="heart" className="w-4 h-4"/>
+                                        Zu Favoriten ❤️
+                                    </>
+                                )
+                            )}
+                        </button>
+                    </div>
+                </div>
             );
         };
 
+        // --- TripTimeline Component (Fixed) ---
         const TripTimeline = () => {
             const [progress, setProgress] = useState(0);
 
@@ -1016,16 +1022,16 @@
                         <div className="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner mt-1">
                             {/* SEGMENTS BACKGROUND */}
                             <div className="absolute inset-0 flex h-full opacity-30">
-                                <div className="w-[35%] bg-rose-300"></div> {/* Budapest: Wed, Thu, Fri, Sat (noon) = 3.5 days -> 35% */}
-                                <div className="w-[30%] bg-amber-300"></div> {/* Vienna: Sat (pm), Sun, Mon, Tue (noon) = 3.0 days -> 30% */}
-                                <div className="w-[35%] bg-emerald-300"></div> {/* Prague: Tue (pm), Wed, Thu, Fri = 3.5 days -> 35% */}
+                                <div className="w-[35%] bg-rose-300"></div> {/* Budapest 3.5 days */}
+                                <div className="w-[30%] bg-amber-300"></div> {/* Vienna 3 days */}
+                                <div className="w-[35%] bg-emerald-300"></div> {/* Prague 3.5 days */}
                             </div>
                             
                             {/* ACTIVE FILL */}
                             <div className="h-full bg-rose-500 dark:bg-rose-600 transition-all duration-1000 ease-linear shadow-lg relative z-10" style={{width: `${progress}%`}}></div>
                         </div>
 
-                        {/* BEER CURSOR - Positioned exactly on the line (vertically centered on the 12px height bar) */}
+                        {/* BEER CURSOR - Positioned exactly on the line */}
                         <div 
                             className="absolute top-[38px] text-2xl transition-all duration-1000 ease-linear beer-cursor z-20 filter drop-shadow-lg" 
                             style={{ left: `calc(${progress}% - 12px)`, marginTop: '-12px' }} 
@@ -1235,8 +1241,13 @@
             };
 
             const openMaps = () => {
-                const query = encodeURIComponent(item.address || `${item.title}, ${item.city}`);
-                window.open(`https://maps.google.com/?q=${query}`, '_blank');
+                // Logic to use lat/lng if available for better precision, else address
+                if (item.lat && item.lng) {
+                     window.open(`https://maps.google.com/?q=${item.lat},${item.lng}`, '_blank');
+                } else {
+                     const query = encodeURIComponent(item.address || `${item.title}, ${item.city}`);
+                     window.open(`https://maps.google.com/?q=${query}`, '_blank');
+                }
             };
 
             const getResBadge = (res) => {
@@ -1265,8 +1276,6 @@
 
             return (
                 <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
-                    
-                    {/* Header Image Area */}
                     <div className="h-44 relative bg-slate-100 dark:bg-slate-700 overflow-hidden">
                         {!imgError && item.img ? (
                             <img src={imagePath} alt={item.title} className="w-full h-full object-cover transition-opacity duration-300" onError={() => setImgError(true)} />
@@ -1348,15 +1357,24 @@
             const [modalOpen, setModalOpen] = useState(false);
             const [modalItem, setModalItem] = useState(null);
             
-            // Dark Mode State
+            // Roulette State
+            const [rouletteOpen, setRouletteOpen] = useState(false);
+            const [selectedRoulettePlace, setSelectedRoulettePlace] = useState(null);
+            const [isSpinning, setIsSpinning] = useState(false);
+            const [rouletteAdded, setRouletteAdded] = useState(false);
+
+            // Alcohol Tracker State
+            const [trackerOpen, setTrackerOpen] = useState(false);
+
+            // Dark Mode & Drunk Mode State
             const [darkMode, setDarkMode] = useState(false);
             const [drunkMode, setDrunkMode] = useState(false);
 
             useEffect(() => {
                 if (drunkMode) {
                      document.body.classList.add('drunk-mode');
-                     // Drunk mode implies Dark mode visually
                      document.documentElement.classList.add('dark');
+                     setView('map'); // Force Map View
                 } else {
                      document.body.classList.remove('drunk-mode');
                      if (!darkMode) {
@@ -1364,7 +1382,6 @@
                      }
                 }
                 
-                // Normal Dark Mode Logic
                 if (darkMode && !drunkMode) {
                     document.documentElement.classList.add('dark');
                     document.body.classList.add('bg-pattern-dark');
@@ -1436,7 +1453,9 @@
                     
                     // Drunk Mode Filter on List View too
                     if (drunkMode) {
-                        if (item.cat === 'Aktivität' || item.cat === 'Transport') return false;
+                         const isHotel = item.cat === 'Hotel';
+                         const isStreetFood = item.subtag === 'street';
+                         if (!isHotel && !isStreetFood) return false;
                     }
                     
                     if (catFilter === "Alle") return true;
@@ -1451,12 +1470,6 @@
 
             const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
             
-            // ROULETTE STATE
-            const [rouletteOpen, setRouletteOpen] = useState(false);
-            const [selectedRoulettePlace, setSelectedRoulettePlace] = useState(null);
-            const [isSpinning, setIsSpinning] = useState(false);
-            const [rouletteAdded, setRouletteAdded] = useState(false);
-
             const handleOpenRoulette = () => {
                 setRouletteOpen(true);
                 setIsSpinning(true);
@@ -1508,7 +1521,7 @@
 
             return (
                 <div className={`min-h-screen max-w-7xl mx-auto pb-20 transition-colors duration-500 ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-                    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100 dark:border-slate-800 shadow-sm mb-6 rounded-b-[30px] transition-colors duration-300">
+                    <header className={`bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100 dark:border-slate-800 shadow-sm mb-6 rounded-b-[30px] transition-colors duration-300 ${drunkMode ? 'hidden' : ''}`}>
                         <div className="flex flex-col gap-4 max-w-7xl mx-auto">
                             <div className="flex flex-row justify-between items-center gap-4">
                                 <div>
@@ -1516,12 +1529,6 @@
                                         <h1 className="text-xl font-bold tracking-tighter text-rose-900 dark:text-rose-400 flex items-center gap-2">
                                             Bingus & Amor <span className="bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-200 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
                                         </h1>
-                                        {/* Simple Weather Display Mock */}
-                                        {cityFilter !== 'Transfer' && cityFilter !== 'Favs' && (
-                                            <div className="flex items-center gap-1 text-xs text-slate-500 bg-blue-50 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                                                <span>☀️</span> <span>18°C</span>
-                                            </div>
-                                        )}
                                     </div>
                                     <div className="hidden md:block">
                                         {tripActive ? (
@@ -1540,7 +1547,8 @@
                                 <div className="hidden md:flex items-center gap-3">
                                    <CurrencyConverter city={cityFilter}/>
                                    
-                                   {/* Drunk Mode Toggle */}
+                                   <AlcoholTrackerButton onOpen={() => setTrackerOpen(true)} />
+
                                    <button 
                                         onClick={() => setDrunkMode(!drunkMode)} 
                                         className={`p-3 rounded-2xl border shadow-sm transition-all hover:scale-105 ${drunkMode ? 'bg-black border-neon-green text-neon-green' : 'bg-white dark:bg-slate-800 border-rose-100 dark:border-slate-700 text-slate-600 dark:text-yellow-400'}`}
@@ -1549,7 +1557,6 @@
                                         <Icon name="ghost" className="w-4 h-4"/>
                                    </button>
                                    
-                                   {/* Dark Mode Toggle */}
                                    <button 
                                         onClick={() => setDarkMode(!darkMode)} 
                                         className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-rose-100 dark:border-slate-700 shadow-sm text-slate-600 dark:text-yellow-400 transition-all hover:scale-105"
@@ -1573,12 +1580,10 @@
                             </div>
                         </div>
 
-                        {/* Desktop Timeline - Visible on MD+ */}
                          <div className="hidden md:block w-full">
                             <TripTimeline />
                          </div>
 
-                         {/* Desktop Navigation & Filters */}
                          <div className="hidden md:flex gap-4 items-center">
                              <div className="flex gap-2">
                                 <button onClick={() => setView('hub')} className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${view === 'hub' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>Hub</button>
@@ -1597,7 +1602,6 @@
                                          </button>
                                      ))}
                                      
-                                     {/* Category Filter + Roulette */}
                                      {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
                                          <div className="flex gap-2 ml-auto items-center">
                                              {["Alle", "Essen", "Aktivität", "Party", "Hotel"].map(cat => (
@@ -1605,7 +1609,7 @@
                                              ))}
                                              <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
                                              <div className="flex-shrink-0">
-                                                 <FoodRoulette city={cityFilter} toggleFav={toggleFav} />
+                                                 <FoodRouletteButton spin={handleOpenRoulette} />
                                              </div>
                                          </div>
                                      )}
@@ -1614,8 +1618,21 @@
                          </div>
                     </header>
                     
+                    {/* Drunk Mode Header Overlay */}
+                    {drunkMode && (
+                        <div className="fixed top-0 left-0 w-full z-[100] bg-black p-4 flex justify-between items-center border-b border-neon-green shadow-neon">
+                             <div className="text-neon-green font-display text-2xl animate-pulse">DRUNK MODE 🥴</div>
+                             <button 
+                                onClick={() => setDrunkMode(false)}
+                                className="border border-neon-pink text-neon-pink px-4 py-2 rounded-xl font-bold uppercase tracking-widest hover:bg-neon-pink hover:text-black transition-colors"
+                             >
+                                 I'm Sober Now
+                             </button>
+                        </div>
+                    )}
+                    
                     {/* Mobile Menu */}
-                    <div className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? 'max-h-[600px] border-t border-slate-100 dark:border-slate-700 mt-4 pt-4 px-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg fixed left-0 right-0 z-40 shadow-lg top-[70px]' : 'max-h-0'}`}>
+                    <div className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? 'max-h-[600px] border-t border-slate-100 dark:border-slate-700 mt-4 pt-4 px-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg fixed left-0 right-0 z-40 shadow-lg top-[70px]' : 'max-h-0'} ${drunkMode ? 'hidden' : ''}`}>
                         <div className="space-y-4 pb-4">
                             <div className="flex justify-between items-center">
                                 <div className="text-xs text-rose-400 font-bold w-full">
@@ -1645,6 +1662,11 @@
                             </div>
 
                             <CurrencyConverter city={cityFilter}/>
+                            
+                            <div className="flex justify-center">
+                                <AlcoholTrackerButton onOpen={() => setTrackerOpen(true)} />
+                            </div>
+
                             <div className="flex justify-center gap-2">
                                 <button onClick={() => { setView('hub'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'hub' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Hub</button>
                                 <button onClick={() => { setView('calendar'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'calendar' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Kalender</button>
@@ -1668,7 +1690,7 @@
                                             ))}
                                             <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
                                             <div className="flex-shrink-0">
-                                                <FoodRoulette city={cityFilter} toggleFav={toggleFav} />
+                                                <FoodRouletteButton spin={handleOpenRoulette} />
                                             </div>
                                         </div>
                                     )}
@@ -1677,8 +1699,8 @@
                         </div>
                     </div>
                     
-                    <main className="max-w-7xl mx-auto">
-                        {view === 'hub' ? (
+                    <main className={`max-w-7xl mx-auto ${drunkMode ? 'pt-16' : ''}`}>
+                        {view === 'hub' && !drunkMode ? (
                             <div className="p-4">
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                                     {filteredDB.map(item => (
@@ -1699,32 +1721,35 @@
                                     </div>
                                 )}
                             </div>
-                        ) : view === 'calendar' ? (
+                        ) : view === 'calendar' && !drunkMode ? (
                             <TripCalendar />
                         ) : (
                             <div className="p-4 fade-in h-full relative">
-                                <div className="bg-white dark:bg-slate-800 rounded-3xl p-2 shadow-lg h-full border-4 border-white dark:border-slate-700">
+                                <div className={`rounded-3xl p-2 shadow-lg h-[80vh] border-4 ${drunkMode ? 'bg-black border-neon-green' : 'bg-white dark:bg-slate-800 border-white dark:border-slate-700'}`}>
                                     <MapView items={filteredDB} activeCity={cityFilter === 'Favs' ? 'Budapest' : cityFilter} drunkMode={drunkMode} />
                                 </div>
-                                <div className="mt-4 text-center text-xs text-slate-400 dark:text-slate-500 font-bold bg-white/80 dark:bg-slate-800/80 inline-block px-4 py-2 rounded-full backdrop-blur-sm mx-auto flex flex-wrap justify-center border border-white dark:border-slate-700 gap-3">
-                                    <span>🥐 Frühstück/Café</span>
-                                    <span>🍔 Street Food</span>
-                                    <span>🥘 Restaurant</span>
-                                    <span>🍸 Party</span>
-                                    <span>🏰 Aktivität</span>
-                                    <span>🛏️ Hotel</span>
-                                </div>
+                                {!drunkMode && (
+                                    <div className="mt-4 text-center text-xs text-slate-400 dark:text-slate-500 font-bold bg-white/80 dark:bg-slate-800/80 inline-block px-4 py-2 rounded-full backdrop-blur-sm mx-auto flex flex-wrap justify-center border border-white dark:border-slate-700 gap-3">
+                                        <span>🥐 Frühstück/Café</span>
+                                        <span>🍔 Street Food</span>
+                                        <span>🥘 Restaurant</span>
+                                        <span>🍸 Party</span>
+                                        <span>🏰 Aktivität</span>
+                                        <span>🛏️ Hotel</span>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </main>
 
                     {/* FABs */}
-                    {view !== 'calendar' && cityFilter !== 'Favs' && (
+                    {view !== 'calendar' && cityFilter !== 'Favs' && !drunkMode && (
                         <SurvivalDictionary city={cityFilter} />
                     )}
-                    <ChallengeButton />
+                    {!drunkMode && <ChallengeButton />}
                     
                     {/* Render Modal at Root level */}
+                    <AlcoholTrackerModal isOpen={trackerOpen} onClose={() => setTrackerOpen(false)} />
                     <FoodRouletteModal 
                         isOpen={rouletteOpen} 
                         onClose={() => setRouletteOpen(false)} 
@@ -1739,92 +1764,6 @@
                 </div>
             );
         };
-        
-        // --- Added back FoodRouletteModal ---
-        const FoodRouletteModal = ({ isOpen, onClose, selectedPlace, isSpinning, added, handleAddToFav }) => {
-            if (!isOpen) return null;
-            
-            return (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={onClose}>
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
-                        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full z-10"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
-                        
-                        <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
-                        
-                        {selectedPlace && (
-                            <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
-                                <div className="h-48 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner group">
-                                        <img src={selectedPlace.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'} />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                                        <div className="absolute bottom-2 left-2 text-white font-bold text-sm bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
-                                        {selectedPlace.subtag}
-                                        </div>
-                                </div>
-                                
-                                <h4 className="font-bold text-2xl text-slate-800 dark:text-white mb-2 leading-tight">{selectedPlace.title}</h4>
-                                
-                                <div className="flex justify-center gap-2 mb-4">
-                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                                        <Icon name="clock" className="w-3 h-3"/> {selectedPlace.time}
-                                    </span>
-                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
-                                        Res: {selectedPlace.res}
-                                    </span>
-                                </div>
-
-                                <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
-                                    {selectedPlace.desc}
-                                </p>
-                                
-                                <div className="font-mono text-2xl text-amber-600 dark:text-amber-400 font-bold mb-6">
-                                    ca. {selectedPlace.cost}.-
-                                </div>
-                            </div>
-                        )}
-                        
-                        <button 
-                            onClick={handleAddToFav} 
-                            className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${
-                                added 
-                                ? 'bg-green-500 text-white hover:bg-green-600' 
-                                : 'bg-slate-900 dark:bg-amber-600 text-white hover:bg-slate-800 dark:hover:bg-amber-500'
-                            }`} 
-                            disabled={isSpinning}
-                        >
-                            {isSpinning ? (
-                                <>
-                                    <Icon name="loader-2" className="w-4 h-4 animate-spin"/>
-                                    Rolling...
-                                </>
-                            ) : (
-                                added ? (
-                                    <>
-                                        <Icon name="check" className="w-4 h-4"/>
-                                        Hinzugefügt! ❤️
-                                    </>
-                                ) : (
-                                    <>
-                                        <Icon name="heart" className="w-4 h-4"/>
-                                        Zu Favoriten ❤️
-                                    </>
-                                )
-                            )}
-                        </button>
-                    </div>
-                </div>
-            );
-        };
-        
-        // --- Renamed FoodRouletteButton for consistency ---
-        const FoodRouletteButton = ({ spin }) => (
-             <button 
-                onClick={spin}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                title="Food Roulette"
-            >
-                <span>🎲</span> Hunger?
-            </button>
-        );
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
