@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingus & Amor's Trip V20 🔥</title>
+    <title>Bingus & Amor's Trip V23 🚀</title>
     
     <!-- Tailwind CSS with Dark Mode Config -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,6 +18,10 @@
                     fontFamily: {
                         sans: ['Quicksand', 'sans-serif'],
                         display: ['Fredoka', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
                     }
                 }
             }
@@ -32,6 +36,9 @@
     <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -136,7 +143,6 @@
             "Transfer": { hello: "Choo Choo", cheers: "Prost", beer: "Bier", thanks: "Danke", bill: "Ticket" }
         };
 
-        // --- SPICY & FUN CHALLENGES ---
         const CHALLENGES = [
             "📸 Mach ein Selfie, auf dem ihr beide so richtig bescheuert ausseht.",
             "💋 Küsst euch leidenschaftlich vor einer Sehenswürdigkeit (mind. 10 Sekunden!).",
@@ -324,7 +330,6 @@
         ];
 
         // --- COMPONENTS ---
-
         const Icon = ({ name, className }) => {
             React.useEffect(() => {
                 if (window.lucide) window.lucide.createIcons();
@@ -345,6 +350,77 @@
             return (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl z-[9999] text-sm font-bold flex items-center gap-2 toast-enter dark:bg-rose-900 dark:text-white dark:border dark:border-rose-700">
                     <span>{message}</span>
+                </div>
+            );
+        };
+        
+        const CurrencyConverter = () => {
+            const [amount, setAmount] = useState('');
+            const [currency, setCurrency] = useState('CHF');
+            
+            const handleConvert = (targetCurr) => {
+                if (!amount) return '---';
+                const val = parseFloat(amount);
+                if (isNaN(val)) return '---';
+                
+                let inCHF = val;
+                if (currency !== 'CHF') {
+                    inCHF = val / FX_RATES[currency];
+                }
+                
+                if (targetCurr === 'CHF') return inCHF.toFixed(2);
+                
+                return Math.round(inCHF * FX_RATES[targetCurr]).toLocaleString();
+            };
+
+            return (
+                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-3 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm text-xs font-medium w-full sm:w-auto">
+                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 w-full sm:w-auto">
+                        <input 
+                            type="number" 
+                            placeholder="100" 
+                            className="w-16 bg-transparent outline-none font-mono font-bold text-slate-700 dark:text-slate-200"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                        />
+                        <select 
+                            value={currency} 
+                            onChange={(e) => setCurrency(e.target.value)}
+                            className="bg-transparent outline-none text-slate-500 dark:text-slate-400 font-bold cursor-pointer"
+                        >
+                            <option value="CHF">CHF</option>
+                            <option value="HUF">HUF</option>
+                            <option value="EUR">EUR</option>
+                            <option value="CZK">CZK</option>
+                        </select>
+                    </div>
+                    
+                    <div className="flex gap-4 w-full justify-between sm:justify-start px-2 text-slate-700 dark:text-slate-300">
+                        {currency !== 'CHF' && (
+                            <div className="flex flex-col items-center">
+                                <span className="text-[9px] text-slate-400 font-bold uppercase">CHF</span>
+                                <span className="font-mono">{handleConvert('CHF')}</span>
+                            </div>
+                        )}
+                        {currency !== 'HUF' && (
+                            <div className="flex flex-col items-center">
+                                <span className="text-[9px] text-rose-400 font-bold uppercase">HUF</span>
+                                <span className="font-mono">{handleConvert('HUF')}</span>
+                            </div>
+                        )}
+                        {currency !== 'EUR' && (
+                            <div className="flex flex-col items-center">
+                                <span className="text-[9px] text-amber-500 font-bold uppercase">EUR</span>
+                                <span className="font-mono">{handleConvert('EUR')}</span>
+                            </div>
+                        )}
+                        {currency !== 'CZK' && (
+                            <div className="flex flex-col items-center">
+                                <span className="text-[9px] text-emerald-500 font-bold uppercase">CZK</span>
+                                <span className="font-mono">{handleConvert('CZK')}</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
             );
         };
@@ -562,120 +638,159 @@
             );
         };
 
+        const CountDown = () => {
+            const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    const now = new Date();
+                    // ZIELZEIT: 1. April 2026, 18:30 Uhr (Abflug Basel)
+                    const target = new Date('2026-04-01T18:30:00');
+                    const diff = target - now;
+                    
+                    if (diff > 0) {
+                        setTimeLeft({
+                            days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                            hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+                            minutes: Math.floor((diff / 1000 / 60) % 60),
+                            seconds: Math.floor((diff / 1000) % 60),
+                        });
+                    } else {
+                        // Trip hat begonnen
+                        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                    }
+                }, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
+            return (
+                <div className="flex gap-2 text-xs font-mono font-bold text-rose-500 dark:text-rose-300 mt-1 bg-white/50 dark:bg-black/30 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-rose-100 dark:border-rose-900/50 inline-flex items-center shadow-sm">
+                    <span className="flex items-center gap-1">
+                         ✈️ <span className="bg-rose-50 dark:bg-rose-900/40 px-1.5 py-0.5 rounded text-rose-600 dark:text-rose-200">{timeLeft.days}d</span>
+                    </span> :
+                    <span>{String(timeLeft.hours).padStart(2, '0')}h</span> :
+                    <span>{String(timeLeft.minutes).padStart(2, '0')}m</span> :
+                    <span className="w-6 text-right font-black text-rose-600 dark:text-rose-400 animate-pulse">{String(timeLeft.seconds).padStart(2, '0')}s</span>
+                </div>
+            );
+        };
+        
+        const FoodRoulette = ({ city }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [selectedPlace, setSelectedPlace] = useState(null);
+            const [isSpinning, setIsSpinning] = useState(false);
+
+            const spin = () => {
+                setIsSpinning(true);
+                setShowModal(true);
+                
+                const foodPlaces = DB.filter(item => item.city === city && item.cat === 'Essen');
+                
+                let count = 0;
+                const maxCount = 20;
+                const interval = setInterval(() => {
+                    const random = foodPlaces[Math.floor(Math.random() * foodPlaces.length)];
+                    setSelectedPlace(random);
+                    count++;
+                    if(count > maxCount) {
+                        clearInterval(interval);
+                        setIsSpinning(false);
+                    }
+                }, 100);
+            };
+
+            if (city === 'Transfer') return null;
+
+            return (
+                <>
+                    <button 
+                        onClick={spin}
+                        className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                        title="Food Roulette"
+                    >
+                        <span>🎲</span> Hunger?
+                    </button>
+
+                    {showModal && (
+                        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-enter" onClick={() => setShowModal(false)}>
+                            <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
+                                <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
+                                
+                                {selectedPlace && (
+                                    <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
+                                        <div className="h-32 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner">
+                                             <img src={selectedPlace.img} className="w-full h-full object-cover" />
+                                             <div className="absolute inset-0 bg-black/10"></div>
+                                        </div>
+                                        <h4 className="font-bold text-xl text-slate-800 dark:text-white mb-1">{selectedPlace.title}</h4>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{selectedPlace.desc}</p>
+                                        <div className="font-mono text-amber-600 font-bold bg-amber-50 dark:bg-amber-900/30 py-2 rounded-lg mb-4 border border-amber-100 dark:border-amber-800">
+                                            {selectedPlace.cost}.-
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <button onClick={() => setShowModal(false)} className="bg-slate-900 dark:bg-amber-600 text-white px-6 py-3 rounded-xl font-bold text-sm w-full hover:scale-105 transition-transform" disabled={isSpinning}>
+                                    {isSpinning ? 'Rolling...' : 'Let\'s go! 🍽️'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+
         const TripTimeline = () => {
             const [progress, setProgress] = useState(0);
 
             useEffect(() => {
-                const now = new Date();
-                const start = new Date('2026-04-01T00:00:00');
-                const end = new Date('2026-04-10T23:59:59');
-                const totalDuration = end - start;
+                const updateProgress = () => {
+                    const now = new Date();
+                    const start = new Date('2026-04-01T00:00:00');
+                    const end = new Date('2026-04-10T23:59:59');
+                    const totalDuration = end - start;
 
-                if (now < start) setProgress(0);
-                else if (now > end) setProgress(100);
-                else {
-                    const elapsed = now - start;
-                    setProgress((elapsed / totalDuration) * 100);
-                }
+                    if (now < start) setProgress(0);
+                    else if (now > end) setProgress(100);
+                    else {
+                        const elapsed = now - start;
+                        setProgress((elapsed / totalDuration) * 100);
+                    }
+                };
+
+                updateProgress();
+                // Update every minute to allow "live" movement if page stays open
+                const interval = setInterval(updateProgress, 60000);
+                return () => clearInterval(interval);
             }, []);
 
             return (
                 <div className="w-full pt-8 pb-4 hidden md:block"> 
-                    <div className="max-w-4xl mx-auto relative">
+                    <div className="max-w-5xl mx-auto relative px-4">
                         {/* LABELS ROW */}
-                        <div className="grid grid-cols-6 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
-                            <div className="flex flex-col items-start"><span className="text-xl">🛬</span><span>01.04</span></div>
-                            <div className="flex flex-col items-center"><span className="text-lg text-rose-400">🇭🇺 BUD</span></div>
-                            <div className="flex flex-col items-center"><span className="text-xl">🚂</span><span>04.04</span></div>
-                            <div className="flex flex-col items-center"><span className="text-lg text-amber-400">🇦🇹 VIE</span></div>
-                            <div className="flex flex-col items-center"><span className="text-xl">🚂</span><span>07.04</span></div>
-                            <div className="flex flex-col items-end"><span className="text-lg text-emerald-400">🇨🇿 PRG</span><span className="mr-1">10.04 🏁</span></div>
+                        <div className="grid grid-cols-6 text-center text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+                            <div className="flex flex-col items-start"><span className="text-2xl mb-1">🛬</span><span>01.04</span></div>
+                            <div className="flex flex-col items-center"><span className="text-lg text-rose-400 font-black">🇭🇺 BUD</span></div>
+                            <div className="flex flex-col items-center"><span className="text-2xl mb-1">🚂</span><span>04.04</span></div>
+                            <div className="flex flex-col items-center"><span className="text-lg text-amber-400 font-black">🇦🇹 VIE</span></div>
+                            <div className="flex flex-col items-center"><span className="text-2xl mb-1">🚂</span><span>07.04</span></div>
+                            <div className="flex flex-col items-end"><span className="text-lg text-emerald-400 font-black mb-1">🇨🇿 PRG</span><span className="flex items-center gap-1">10.04 <span className="text-xl">🛫</span></span></div>
                         </div>
 
-                        {/* PROGRESS BAR TRACK - Neutral Background now */}
-                        <div className="relative w-full h-4 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
-                            {/* ACTIVE FILL - Single Color */}
-                            <div className="h-full bg-rose-500 dark:bg-rose-600 transition-all duration-1000 ease-linear shadow-lg" style={{width: `${progress}%`}}></div>
+                        {/* PROGRESS BAR TRACK */}
+                        <div className="relative w-full h-5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
+                            {/* ACTIVE FILL */}
+                            <div className="h-full bg-gradient-to-r from-rose-400 via-rose-500 to-rose-600 shadow-lg transition-all duration-1000 ease-linear" style={{width: `${progress}%`}}></div>
                         </div>
 
-                        {/* BEER CURSOR - Centered on track */}
+                        {/* BEER CURSOR */}
                         <div 
-                            className="absolute top-[34px] text-2xl transition-all duration-1000 ease-linear beer-cursor z-10 filter drop-shadow-lg" 
-                            style={{ left: `calc(${progress}% - 15px)` }}
+                            className="absolute top-[42px] text-3xl transition-all duration-1000 ease-linear beer-cursor z-10 filter drop-shadow-xl hover:scale-125 cursor-pointer" 
+                            style={{ left: `calc(${progress}% - 8px)` }}
+                            title="Aktueller Pegelstand 🍺"
                         >
                             🍺
                         </div>
-                    </div>
-                </div>
-            );
-        };
-
-        const CurrencyConverter = () => {
-            const [amount, setAmount] = useState('');
-            const [currency, setCurrency] = useState('CHF');
-            
-            const handleConvert = (targetCurr) => {
-                if (!amount) return '---';
-                const val = parseFloat(amount);
-                if (isNaN(val)) return '---';
-                
-                let inCHF = val;
-                if (currency !== 'CHF') {
-                    inCHF = val / FX_RATES[currency];
-                }
-                
-                if (targetCurr === 'CHF') return inCHF.toFixed(2);
-                
-                return Math.round(inCHF * FX_RATES[targetCurr]).toLocaleString();
-            };
-
-            return (
-                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-3 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm text-xs font-medium w-full sm:w-auto">
-                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 w-full sm:w-auto">
-                        <input 
-                            type="number" 
-                            placeholder="100" 
-                            className="w-16 bg-transparent outline-none font-mono font-bold text-slate-700 dark:text-slate-200"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                        />
-                        <select 
-                            value={currency} 
-                            onChange={(e) => setCurrency(e.target.value)}
-                            className="bg-transparent outline-none text-slate-500 dark:text-slate-400 font-bold cursor-pointer"
-                        >
-                            <option value="CHF">CHF</option>
-                            <option value="HUF">HUF</option>
-                            <option value="EUR">EUR</option>
-                            <option value="CZK">CZK</option>
-                        </select>
-                    </div>
-                    
-                    <div className="flex gap-4 w-full justify-between sm:justify-start px-2 text-slate-700 dark:text-slate-300">
-                        {currency !== 'CHF' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-slate-400 font-bold uppercase">CHF</span>
-                                <span className="font-mono">{handleConvert('CHF')}</span>
-                            </div>
-                        )}
-                        {currency !== 'HUF' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-rose-400 font-bold uppercase">HUF</span>
-                                <span className="font-mono">{handleConvert('HUF')}</span>
-                            </div>
-                        )}
-                        {currency !== 'EUR' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-amber-500 font-bold uppercase">EUR</span>
-                                <span className="font-mono">{handleConvert('EUR')}</span>
-                            </div>
-                        )}
-                        {currency !== 'CZK' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-emerald-500 font-bold uppercase">CZK</span>
-                                <span className="font-mono">{handleConvert('CZK')}</span>
-                            </div>
-                        )}
                     </div>
                 </div>
             );
@@ -864,7 +979,6 @@
                 if (platform === 'google') {
                     window.open(`https://www.google.com/search?q=${encodedQuery}`, '_blank');
                 } else if (platform === 'tiktok') {
-                    // Check if mobile
                     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                     
                     if (isMobile) {
@@ -908,8 +1022,6 @@
 
             return (
                 <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
-                    
-                    {/* Header Image Area */}
                     <div className="h-44 relative bg-slate-100 dark:bg-slate-700 overflow-hidden">
                         {!imgError && item.img ? (
                             <img src={imagePath} alt={item.title} className="w-full h-full object-cover transition-opacity duration-300" onError={() => setImgError(true)} />
@@ -1013,6 +1125,32 @@
                 setToastMsg(msg);
                 setShowToast(true);
             };
+
+            const triggerConfetti = () => {
+                const duration = 3000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#fb7185', '#fbbf24', '#34d399']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                         colors: ['#fb7185', '#fbbf24', '#34d399']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            };
             
             const [favs, setFavs] = useState(() => {
                 try {
@@ -1047,31 +1185,23 @@
 
             const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-            // Trip Progress Logic
-            const [progress, setProgress] = useState(0);
-            const [daysLeft, setDaysLeft] = useState(0);
+            // Trip Progress Logic for header
             const [tripActive, setTripActive] = useState(false);
+            const [daysLeft, setDaysLeft] = useState(0);
 
             useEffect(() => {
-                const start = new Date('2026-04-01T00:00:00').getTime();
-                const end = new Date('2026-04-10T23:59:59').getTime();
-                const now = new Date().getTime(); 
+                const now = new Date();
+                const start = new Date('2026-04-01T00:00:00');
+                const end = new Date('2026-04-10T23:59:59');
                 
                 const diffTime = start - now;
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
                 setDaysLeft(diffDays);
 
-                if (now < start) {
-                    setProgress(0);
-                    setTripActive(false);
-                } else if (now > end) {
-                    setProgress(100);
-                    setTripActive(false);
-                } else {
+                if (now >= start && now <= end) {
                     setTripActive(true);
-                    const totalDuration = end - start;
-                    const elapsed = now - start;
-                    setProgress((elapsed / totalDuration) * 100);
+                } else {
+                    setTripActive(false);
                 }
             }, []);
 
@@ -1086,9 +1216,18 @@
                                     <h1 className="text-xl font-bold tracking-tighter text-rose-900 dark:text-rose-400 flex items-center gap-2">
                                         Bingus & Amor <span className="bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-200 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
                                     </h1>
-                                    <p className="text-xs text-rose-400 dark:text-slate-400 mt-1 font-bold md:block hidden">
-                                        {tripActive ? "Der Trip läuft! 🌍 Viel Spaß!" : (daysLeft > 0 ? `⏳ Noch ${daysLeft} Tage bis zum Abflug! ✈️` : "Trip vorbei 👋")}
-                                    </p>
+                                    <div className="hidden md:block">
+                                        {tripActive ? (
+                                            <div className="text-xs font-bold text-rose-500 animate-pulse">Der Trip läuft! 🚀</div>
+                                        ) : daysLeft > 0 ? (
+                                            <div className="flex flex-col items-start">
+                                                <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider mb-0.5">Countdown bis Abflug</span>
+                                                <CountDown />
+                                            </div>
+                                        ) : (
+                                            <div className="text-xs font-bold text-slate-400">Trip vorbei 👋</div>
+                                        )}
+                                    </div>
                                 </div>
                                 
                                 <div className="hidden md:flex items-center gap-3">
@@ -1101,6 +1240,15 @@
                                         title={darkMode ? "Licht an" : "Licht aus"}
                                    >
                                         <Icon name={darkMode ? "sun" : "moon"} className="w-4 h-4"/>
+                                   </button>
+
+                                    {/* HYPE BUTTON */}
+                                   <button 
+                                        onClick={triggerConfetti} 
+                                        className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold shadow-lg hover:shadow-rose-500/30 transition-all hover:scale-105 active:scale-95 text-xs flex items-center gap-2 animate-pulse-slow"
+                                        title="Konfetti Regen!"
+                                   >
+                                        <span>🎉</span> HYPE!
                                    </button>
                                 </div>
                                 
@@ -1134,12 +1282,14 @@
                                          </button>
                                      ))}
                                      
-                                     {/* Category Filter */}
+                                     {/* Category Filter + Roulette */}
                                      {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
-                                         <div className="flex gap-2 ml-auto">
+                                         <div className="flex gap-2 ml-auto items-center">
                                              {["Alle", "Essen", "Aktivität", "Party", "Hotel"].map(cat => (
                                                  <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1 rounded-full text-[10px] font-bold border transition-colors ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>{cat}</button>
                                              ))}
+                                             <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
+                                             <div className="flex-shrink-0"><FoodRoulette city={cityFilter} /></div>
                                          </div>
                                      )}
                                  </div>
@@ -1151,17 +1301,26 @@
                     <div className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? 'max-h-[600px] border-t border-slate-100 dark:border-slate-700 mt-4 pt-4 px-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg fixed left-0 right-0 z-40 shadow-lg top-[70px]' : 'max-h-0'}`}>
                         <div className="space-y-4 pb-4">
                             <div className="flex justify-between items-center">
-                                <p className="text-xs text-rose-400 font-bold">
-                                    {tripActive ? "Der Trip läuft! 🌍" : (daysLeft > 0 ? `⏳ Noch ${daysLeft} Tage!` : "Trip vorbei 👋")}
-                                </p>
-                                <button 
-                                    onClick={() => setDarkMode(!darkMode)} 
-                                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
-                                >
-                                    <Icon name={darkMode ? "sun" : "moon"} className="w-4 h-4 text-slate-600 dark:text-yellow-400"/>
-                                </button>
+                                <div className="text-xs text-rose-400 font-bold w-full">
+                                     {tripActive ? "Der Trip läuft! 🌍" : (daysLeft > 0 ? <div className="flex justify-between items-center w-full"><span>Countdown:</span><CountDown /></div> : "Trip vorbei 👋")}
+                                </div>
                             </div>
                             
+                            <div className="flex justify-between gap-2">
+                                <button 
+                                    onClick={() => setDarkMode(!darkMode)} 
+                                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex-1 flex items-center justify-center gap-2 text-xs font-bold"
+                                >
+                                    <Icon name={darkMode ? "sun" : "moon"} className="w-4 h-4"/> {darkMode ? "Light" : "Dark"}
+                                </button>
+                                <button 
+                                    onClick={triggerConfetti} 
+                                    className="p-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white flex-1 flex items-center justify-center gap-2 text-xs font-bold"
+                                >
+                                    <span>🎉</span> HYPE
+                                </button>
+                            </div>
+
                             <CurrencyConverter />
                             <div className="flex justify-center gap-2">
                                 <button onClick={() => { setView('hub'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'hub' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Hub</button>
@@ -1180,10 +1339,12 @@
                                         ))}
                                     </div>
                                     {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
-                                        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                                        <div className="flex gap-2 overflow-x-auto no-scrollbar items-center">
                                             {["Alle", "Essen", "Aktivität", "Party", "Hotel"].map(cat => (
-                                                <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>{cat}</button>
+                                                <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border transition-colors whitespace-nowrap ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>{cat}</button>
                                             ))}
+                                            <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
+                                            <div className="flex-shrink-0"><FoodRoulette city={cityFilter} /></div>
                                         </div>
                                     )}
                                 </div>
