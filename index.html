@@ -1,19 +1,35 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingus & Amor's Trip V18 ✨</title>
+    <title>Bingus & Amor's Trip V20 🔥</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS with Dark Mode Config -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        rose: { 950: '#4c0519' }, 
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Leaflet CSS & JS (OpenStreetMap) -->
+    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -26,15 +42,25 @@
     <style>
         body { 
             font-family: 'Quicksand', sans-serif; 
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .bg-pattern-light {
             background-color: #fff1f2;
             background-image: 
                 radial-gradient(at 10% 10%, rgba(253, 164, 175, 0.2) 0px, transparent 50%), 
                 radial-gradient(at 90% 10%, rgba(251, 191, 36, 0.15) 0px, transparent 50%), 
                 radial-gradient(at 50% 90%, rgba(52, 211, 153, 0.15) 0px, transparent 50%);
             background-attachment: fixed;
-            color: #4c0519;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
+        }
+
+        .bg-pattern-dark {
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(76, 5, 25, 0.3) 0px, transparent 50%), 
+                radial-gradient(at 90% 10%, rgba(56, 189, 248, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
         }
         
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
@@ -48,20 +74,23 @@
         .badge-res-med { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
         .badge-res-low { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         
-        /* Card Hover */
+        .dark .badge-res-high { background-color: #450a0a; color: #fecaca; border-color: #7f1d1d; }
+        .dark .badge-res-med { background-color: #431407; color: #fed7aa; border-color: #7c2d12; }
+        .dark .badge-res-low { background-color: #052e16; color: #bbf7d0; border-color: #14532d; }
+
         .card-hover { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .card-hover:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 15px 30px -5px rgba(251, 113, 133, 0.2); z-index: 10; }
 
-        /* Image Handling */
         .img-fallback {
             background-color: #ffe4e6;
             display: flex; align-items: center; justify-content: center;
             color: #fb7185; font-weight: 700; font-size: 1.5rem; letter-spacing: 0.05em;
             width: 100%; height: 100%;
         }
+        .dark .img-fallback { background-color: #334155; color: #94a3b8; }
         
-        /* Map Styles */
         #map-container { height: 65vh; width: 100%; border-radius: 1.5rem; z-index: 1; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 4px solid white; position: relative; }
+        .dark #map-container { border-color: #1e293b; }
         
         .emoji-marker {
             display: flex; justify-content: center; align-items: center;
@@ -72,79 +101,61 @@
         }
         .emoji-marker:hover { transform: scale(1.3) translateY(-5px); z-index: 1000 !important; }
         
-        /* Leaflet Popup Customization */
         .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; }
         .leaflet-popup-content { margin: 0; width: 260px !important; }
         .popup-content { padding: 12px; font-family: 'Quicksand', sans-serif; }
         
-        /* Scrollbars */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 20px; }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background: #475569; }
 
         /* Animation Keyframes */
         .beer-cursor { transition: left 1s linear; will-change: left; }
         .heart-active { animation: heartPop 0.3s ease-out forwards; }
         @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
-        /* Toast Animation */
         .toast-enter { animation: toastUp 0.3s ease-out forwards; }
         @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
     </style>
 </head>
-<body>
+<body class="transition-colors duration-300">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useMemo, useRef, useEffect } = React;
 
-        // --- KONFIGURATION & DICTIONARY ---
         const FX_RATES = { 'HUF': 430, 'EUR': 1.06, 'CZK': 26 };
 
         const DICTIONARY = {
-            "Budapest": {
-                hello: "Szia (Sia)",
-                cheers: "Egészségedre (Egesh-sheg-ed-re)",
-                beer: "Sör (Schör)",
-                thanks: "Köszönöm (Kösönöm)",
-                bill: "A számlát kérem"
-            },
-            "Wien": {
-                hello: "Servus / Griaß di",
-                cheers: "Prost / Zum Wohl",
-                beer: "Krügerl / Seidl",
-                thanks: "Danke ur leiwand",
-                bill: "Zahlen bitte"
-            },
-            "Prag": {
-                hello: "Ahoj (Ahoy)",
-                cheers: "Na zdraví (Nas-dravi)",
-                beer: "Pivo",
-                thanks: "Děkuji (Djekuyi)",
-                bill: "Účet prosím (U-tschet)"
-            },
-            "Transfer": { // Fallback / Fun
-                hello: "Choo Choo",
-                cheers: "Prost",
-                beer: "Bier",
-                thanks: "Danke",
-                bill: "Ticket"
-            }
+            "Budapest": { hello: "Szia", cheers: "Egészségedre", beer: "Sör", thanks: "Köszönöm", bill: "A számlát kérem" },
+            "Wien": { hello: "Servus", cheers: "Prost", beer: "Krügerl", thanks: "Danke", bill: "Zahlen bitte" },
+            "Prag": { hello: "Ahoj", cheers: "Na zdraví", beer: "Pivo", thanks: "Děkuji", bill: "Účet prosím" },
+            "Transfer": { hello: "Choo Choo", cheers: "Prost", beer: "Bier", thanks: "Danke", bill: "Ticket" }
         };
+
+        // --- SPICY & FUN CHALLENGES ---
+        const CHALLENGES = [
+            "📸 Mach ein Selfie, auf dem ihr beide so richtig bescheuert ausseht.",
+            "💋 Küsst euch leidenschaftlich vor einer Sehenswürdigkeit (mind. 10 Sekunden!).",
+            "🍹 Bestellt den Drink mit dem lustigsten/komischsten Namen auf der Karte.",
+            "🍆 Finde etwas Phallisches in der Architektur/Kunst und mach ein Foto davon.",
+            "🍻 Ex dein Bier! (Oder zumindest einen sehr großen Schluck auf ex).",
+            "🍑 Bewerte unauffällig den Hintern einer Statue (Skala 1-10).",
+            "📸 Mach ein sexy Foto von deinem Partner beim Essen.",
+            "🗣️ Versuche, einen Einheimischen zum Lachen zu bringen (Witz oder Grimasse).",
+            "💃 Tanzt kurz (10sek) an einem öffentlichen Ort ohne Musik.",
+            "🥂 Stoßt auf den besten Sex eures Lebens an (diskret!)."
+        ];
 
         // --- DATENBANK ---
         const DB = [
-            // --- HOTELS ---
             { id: "h1", lat: 47.4965, lng: 19.0629, city: "Budapest", cat: "Hotel", subtag: "hotel", title: "Quiet Retreat", cost: "???", time: "Check-in 15:00", res: "Gebucht", address: "Kazinczy utca 11, 1075 Budapest", desc: "Direkt neben Szimpla Kert. Mitten im Geschehen, aber ruhig.", img: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/498369255.jpg?k=3332454532656565656565656565656565656565656565656565656565656565&o=&hp=1" },
             { id: "h2", lat: 48.1936, lng: 16.3547, city: "Wien", cat: "Hotel", subtag: "hotel", title: "Hotel Indigo Naschmarkt", cost: "???", time: "Check-in 15:00", res: "Gebucht", address: "Rechte Wienzeile 87, 1050 Wien", desc: "Design Hotel direkt am Naschmarkt. Hidden Garden.", img: "https://digital.ihg.com/is/image/ihg/hotel-indigo-vienna-6623696224-4x3" },
-
-            // TRANSFER
             { id: "t1", lat: 47.5004, lng: 19.0840, city: "Transfer", cat: "Transport", subtag: "train", title: "RegioJet Business Class", cost: 40, time: "2h 40min", res: "Zwingend", address: "Budapest-Keleti, 1087 Budapest", desc: "Route: Budapest -> Wien. 4er-Abteil, Ledersessel. Gratis Sekt/Kaffee.", img: "regiojetbu.jpg" },
             { id: "t2", lat: 48.1850, lng: 16.3779, city: "Transfer", cat: "Transport", subtag: "train", title: "ÖBB Railjet Business", cost: 80, time: "4h 05min", res: "Zwingend", address: "Wien Hbf, 1100 Wien", desc: "Route: Wien -> Prag. Upgrade zur 1. Klasse. Extrem ruhig.", img: "regiojetbu.jpg" },
-
-            // BUDAPEST - ESSEN
             { id: "b_f1", lat: 47.5040, lng: 19.0628, city: "Budapest", cat: "Essen", subtag: "casual", title: "Menza Étterem", cost: 35, time: "1.5h", res: "Empfohlen", address: "Liszt Ferenc tér 2, 1061 Ungarn", desc: "Retro-70er Style Kantine, gehoben. Sehr lecker.", img: "menzatt.jpg" },
             { id: "b_f2", lat: 47.4975, lng: 19.0635, city: "Budapest", cat: "Essen", subtag: "street", title: "Street Food Karavan", cost: 15, time: "45min", res: "Nein", address: "Kazinczy u. 18, 1075 Ungarn", desc: "Direkt neben Szimpla. Lángos-Burger.", img: "streetfo.jpg" },
             { id: "b_f3", lat: 47.5004, lng: 19.0657, city: "Budapest", cat: "Essen", subtag: "fine", title: "Mazel Tov", cost: 60, time: "2h", res: "Zwingend", address: "Akácfa u. 47, 1072 Ungarn", desc: "Israelische Fusion in schicker Ruine. Tolle Atmosphäre.", img: "mazelto.jpg" },
@@ -172,8 +183,6 @@
             { id: "b_f25", lat: 47.4960, lng: 19.0527, city: "Budapest", cat: "Essen", subtag: "street", title: "Crudo Pizza", cost: 25, time: "1h", res: "Nein", address: "Fehér Hajó u. 2-6, 1052 Ungarn", desc: "Pizza & Wine.", img: "crudopi.jpg" },
             { id: "b_f26", lat: 47.4994, lng: 19.0606, city: "Budapest", cat: "Essen", subtag: "cafe", title: "Fluffy and me Pancake", cost: 20, time: "45min", res: "Nein", address: "Kazinczy u. 52 C, 1075 Ungarn", desc: "Fluffige japanische Pancakes.", img: "fluffyan.jpg" },
             { id: "b_f27", lat: 47.5115, lng: 19.0573, city: "Budapest", cat: "Essen", subtag: "street", title: "McDonalds Nyugati", cost: 15, time: "30min", res: "Nein", address: "Teréz krt. 55, 1062 Ungarn", desc: "Der schönste McDonalds der Welt.", img: "mcdonaldsny.jpg" },
-
-            // BUDAPEST - AKTIVITÄT
             { id: "b_a1", lat: 47.5069, lng: 19.0650, city: "Budapest", cat: "Aktivität", subtag: "culture", title: "House of Terror", cost: 15, time: "2h", res: "Nein", address: "Andrássy út 60, 1062 Ungarn", desc: "Museum Nazi- & Sowjetzeit.", img: "houseof.jpg" },
             { id: "b_a2", lat: 47.5203, lng: 19.0551, city: "Budapest", cat: "Aktivität", subtag: "relax", title: "Mandala Day Spa", cost: 100, time: "3h+", res: "Zwingend", address: "Ipoly u. 8, 1133 Ungarn", desc: "Luxus pur, Massagen.", img: "mandalada.jpg" },
             { id: "b_a3", lat: 47.4989, lng: 19.0788, city: "Budapest", cat: "Aktivität", subtag: "culture", title: "Chimney Cake Workshop", cost: 35, time: "1.5h", res: "Zwingend", address: "Rákóczi út 73, 1088 Ungarn", desc: "Kürtőskalács selber backen.", img: "chimneyca.jpg" },
@@ -194,8 +203,6 @@
             { id: "b_a18", lat: 47.4891, lng: 19.0478, city: "Budapest", cat: "Aktivität", subtag: "relax", title: "Rudas Bad", cost: 35, time: "3h", res: "Nein", address: "Döbrentei tér 9, 1013 Ungarn", desc: "Türkisches Bad.", img: "rudasba.jpg" },
             { id: "b_a19", lat: 47.5180, lng: 19.0371, city: "Budapest", cat: "Aktivität", subtag: "relax", title: "Lukács Bad", cost: 25, time: "3h", res: "Nein", address: "Frankel Leó út 25-29, 1023 Ungarn", desc: "Favorit der Einheimischen.", img: "lukcsba.jpg" },
             { id: "b_a20", lat: 47.5273, lng: 19.0479, city: "Budapest", cat: "Aktivität", subtag: "relax", title: "Palatinus Strand", cost: 20, time: "4h", res: "Nein", address: "Margitsziget, 1007 Ungarn", desc: "Freibad Margareteninsel.", img: "palatinusst.jpg" },
-
-            // BUDAPEST - PARTY
             { id: "b_p1", lat: 47.4969, lng: 19.0633, city: "Budapest", cat: "Party", subtag: "bar", title: "Szimpla Kert", cost: 15, time: "Open End", res: "Nein", address: "Kazinczy u. 14, 1075 Ungarn", desc: "Muss sein. Ruinenbar.", img: "szimplake.jpg" },
             { id: "b_p2", lat: 47.5005, lng: 19.0655, city: "Budapest", cat: "Party", subtag: "club", title: "Instant-Fogas", cost: 10, time: "Bis 06:00", res: "Nein", address: "Akácfa u. 49-51, 1073 Ungarn", desc: "Riesiges Labyrinth, 7 Floors.", img: "instantfogas.jpg" },
             { id: "b_p3", lat: 47.4976, lng: 19.0610, city: "Budapest", cat: "Party", subtag: "bar", title: "Hotsy Totsy", cost: 40, time: "2h", res: "Empfohlen", address: "Síp u. 24, 1075 Ungarn", desc: "High-End Cocktails.", img: "hotsyto.jpg" },
@@ -208,8 +215,6 @@
             { id: "b_p10", lat: 47.4928, lng: 19.0602, city: "Budapest", cat: "Party", subtag: "bar", title: "Csendes Létterem", cost: 15, time: "2h", res: "Nein", address: "Ferenczy István u. 5, 1053 Ungarn", desc: "Surreale Vintage-Bar.", img: "csendeslt.jpg" },
             { id: "b_p11", lat: 47.4836, lng: 19.0727, city: "Budapest", cat: "Party", subtag: "bar", title: "Élesztőház", cost: 20, time: "2h", res: "Nein", address: "Tűzoltó u. 22, 1094 Ungarn", desc: "Ruinen-Pub für Craft Beer.", img: "leszthz.jpg" },
             { id: "b_p12", lat: 47.4981, lng: 19.0555, city: "Budapest", cat: "Party", subtag: "bar", title: "Madhouse", cost: 25, time: "2h", res: "Nein", address: "Anker köz 1-3, 1061 Ungarn", desc: "Bistro der Mad Scientist Brauerei.", img: "madhouse.jpg" },
-
-            // WIEN - ESSEN
             { id: "w_f1", lat: 48.2100, lng: 16.3683, city: "Wien", cat: "Essen", subtag: "casual", title: "Schwarzes Kameel", cost: 35, time: "1h", res: "Nein", address: "Bognergasse 5, 1010 Wien", desc: "MUST-DO. Stehbuffet, Brötchen & Wein. Society Treff.", img: "schwarzeska.jpg" },
             { id: "w_f2", lat: 48.2094, lng: 16.3748, city: "Wien", cat: "Essen", subtag: "casual", title: "Figlmüller", cost: 45, time: "1.5h", res: "Zwingend", address: "Wollzeile 5, 1010 Wien", desc: "Heimat des Schnitzels.", img: "figlmller.jpg" },
             { id: "w_f3", lat: 48.1979, lng: 16.3621, city: "Wien", cat: "Essen", subtag: "casual", title: "Naschmarkt (NENI)", cost: 35, time: "1.5h", res: "Empfohlen", address: "Naschmarkt 510, 1060 Wien", desc: "Israelisch am Markt.", img: "naschmarkt.jpg" },
@@ -236,8 +241,6 @@
             { id: "w_f24", lat: 48.2058, lng: 16.3561, city: "Wien", cat: "Essen", subtag: "casual", title: "1500 Foodmakers", cost: 40, time: "1.5h", res: "Empfohlen", address: "Museumstraße 9, 1070 Wien", desc: "Im 25hours Hotel.", img: "1500fo.jpg" },
             { id: "w_f25", lat: 48.2121, lng: 16.3778, city: "Wien", cat: "Essen", subtag: "fine", title: "Motto am Fluss", cost: 50, time: "2h", res: "Empfohlen", address: "Franz-Josefs-Kai 2, 1010 Wien", desc: "Schiff-Design.", img: "mottoam.jpg" },
             { id: "w_f26", lat: 48.2002, lng: 16.3617, city: "Wien", cat: "Essen", subtag: "casual", title: "Ramien", cost: 30, time: "1h", res: "Nein", address: "Gumpendorfer Str. 9, 1060 Wien", desc: "Asiatisch.", img: "ramien.jpg" },
-
-            // WIEN - AKTIVITÄT
             { id: "w_a1", lat: 48.2046, lng: 16.3683, city: "Wien", cat: "Aktivität", subtag: "culture", title: "Albertina", cost: 20, time: "2h", res: "Nein", address: "Albertinaplatz 1, 1010 Wien", desc: "Prunkräume & Kunst.", img: "albertina.jpg" },
             { id: "w_a2", lat: 48.2075, lng: 16.3940, city: "Wien", cat: "Aktivität", subtag: "culture", title: "Hundertwasserhaus", cost: 0, time: "30min", res: "Nein", address: "Kegelgasse 36-38, 1030 Wien", desc: "Architektur Fotos.", img: "hundertwasserhaus.jpg" },
             { id: "w_a3", lat: 48.2036, lng: 16.4233, city: "Wien", cat: "Aktivität", subtag: "relax", title: "Prater", cost: 30, time: "3h", res: "Nein", address: "1020 Wien", desc: "Vergnügungspark.", img: "prater.jpg" },
@@ -254,8 +257,6 @@
             { id: "w_a14", lat: 48.2038, lng: 16.3731, city: "Wien", cat: "Aktivität", subtag: "culture", title: "Haus der Musik", cost: 15, time: "1.5h", res: "Nein", address: "Seilerstätte 30, 1010 Wien", desc: "Interaktiv.", img: "hausdermusik.jpg" },
             { id: "w_a15", lat: 48.2016, lng: 16.3691, city: "Wien", cat: "Aktivität", subtag: "culture", title: "Dritte Mann Tour", cost: 25, time: "1h", res: "Ticket", address: "Karlsplatz, 1010 Wien", desc: "Kanaltour.", img: "drittema.jpg" },
             { id: "w_a16", lat: 48.2082, lng: 16.3682, city: "Wien", cat: "Aktivität", subtag: "culture", title: "Time Travel Vienna", cost: 20, time: "1h", res: "Nein", address: "Habsburgergasse 10A, 1010 Wien", desc: "5D Show.", img: "timetr.jpg" },
-
-            // WIEN - PARTY
             { id: "w_p1", lat: 48.2067, lng: 16.3605, city: "Wien", cat: "Party", subtag: "club", title: "Volksgarten", cost: 20, time: "Bis 05:00", res: "Nein", address: "Volksgarten, 1010 Wien", desc: "Schicker Club im Park.", img: "volksgarten.jpg" },
             { id: "w_p2", lat: 48.2348, lng: 16.3608, city: "Wien", cat: "Party", subtag: "club", title: "Grelle Forelle", cost: 20, time: "Bis 06:00", res: "Nein", address: "Spittelauer Lände 12, 1090 Wien", desc: "Techno, Fotoverbot.", img: "grellefo.jpg" },
             { id: "w_p3", lat: 48.1926, lng: 16.3377, city: "Wien", cat: "Party", subtag: "bar", title: "Travel Shack", cost: 5, time: "Bis 04:00", res: "Nein", address: "Mariahilfer Gürtel 21, 1150 Wien", desc: "Backpacker, Shots.", img: "travelsh.jpg" },
@@ -265,8 +266,6 @@
             { id: "w_p7", lat: 48.2011, lng: 16.3695, city: "Wien", cat: "Party", subtag: "club", title: "Sass Music Club", cost: 15, time: "Bis 06:00", res: "Nein", address: "Karlsplatz 1, 1010 Wien", desc: "Elektronisch, intim.", img: "sassmu.jpg" },
             { id: "w_p8", lat: 48.2174, lng: 16.3974, city: "Wien", cat: "Party", subtag: "club", title: "Prater Dome", cost: 15, time: "Bis 05:00", res: "Nein", address: "Riesenradplatz 7, 1020 Wien", desc: "Großraumdisco.", img: "praterdo.jpg" },
             { id: "w_p9", lat: 48.1875, lng: 16.4051, city: "Wien", cat: "Party", subtag: "club", title: "Louis Tomlinson", cost: 80, time: "Event", res: "Ticket", address: "Karl-Farkas-Gasse 19, 1030 Wien", desc: "Konzert Marx Halle.", img: "" },
-
-            // PRAG - ESSEN
             { id: "p_f1", lat: 50.0834, lng: 14.4287, city: "Prag", cat: "Essen", subtag: "casual", title: "Kantýna", cost: 40, time: "1.5h", res: "Nein", address: "Politických vězňů 1511/5, 110 00 Prag", desc: "Carpaccio-Metzgerei in Bank.", img: "kantna.jpg" },
             { id: "p_f2", lat: 50.0907, lng: 14.4259, city: "Prag", cat: "Essen", subtag: "casual", title: "Lokal Dlouhááá", cost: 25, time: "Open End", res: "Empfohlen", address: "Dlouhá 33, 110 00 Prag", desc: "Frischestes Pilsner Urquell.", img: "lokaldl.jpg" },
             { id: "p_f3", lat: 50.0801, lng: 14.4286, city: "Prag", cat: "Essen", subtag: "casual", title: "Vytopna Railway", cost: 35, time: "1.5h", res: "Empfohlen", address: "Václavské nám. 802/56, 110 00 Prag", desc: "Wenzelsplatz. Getränke kommen mit Modelleisenbahn.", img: "vytopnara.jpg" },
@@ -296,8 +295,6 @@
             { id: "p_f27", lat: 50.0753, lng: 14.4513, city: "Prag", cat: "Essen", subtag: "cafe", title: "Coffee Room", cost: 15, time: "45min", res: "Nein", address: "Korunní 74, 101 00 Prag", desc: "Avocado Toast.", img: "coffeero.jpg" },
             { id: "p_f28", lat: 50.0654, lng: 14.4199, city: "Prag", cat: "Essen", subtag: "casual", title: "U Kroka", cost: 25, time: "1.5h", res: "Zwingend", address: "Vratislavova 12/28, 128 00 Prag", desc: "Abseits des Zentrums. Top Preis.", img: "ukr.jpg" },
             { id: "p_f29", lat: 50.0841, lng: 14.4145, city: "Prag", cat: "Essen", subtag: "fine", title: "Lehká Hlava", cost: 30, time: "1.5h", res: "Empfohlen", address: "Boršov 280/2, 110 00 Prag", desc: "Vegetarisch, spacig.", img: "lehkhl.jpg" },
-
-            // PRAG - AKTIVITÄT
             { id: "p_a1", lat: 50.0880, lng: 14.4241, city: "Prag", cat: "Aktivität", subtag: "relax", title: "Bier Spa Bernard", cost: 90, time: "1h", res: "Zwingend", address: "Týn 10, 110 00 Prag", desc: "Baden in Bier.", img: "biersp.jpg" },
             { id: "p_a2", lat: 50.0813, lng: 14.4285, city: "Prag", cat: "Aktivität", subtag: "culture", title: "Nuklearbunker Tour", cost: 25, time: "2h", res: "Ticket", address: "Václavské nám. 45 (Hotel Jalta), 110 00 Prag", desc: "Ex-Sowjet Bunker.", img: "nuklearbunkerto.jpg" },
             { id: "p_a3", lat: 50.0789, lng: 14.4132, city: "Prag", cat: "Aktivität", subtag: "relax", title: "Tretboot fahren", cost: 20, time: "1h", res: "Nein", address: "Slovanský ostrov, 110 00 Prag", desc: "Auf der Moldau (Slovanský Insel).", img: "tretbootfa.jpg" },
@@ -315,8 +312,6 @@
             { id: "p_a15", lat: 50.0789, lng: 14.4310, city: "Prag", cat: "Aktivität", subtag: "culture", title: "Nationalmuseum", cost: 20, time: "2h", res: "Nein", address: "Václavské nám. 68, 110 00 Prag", desc: "Prunkbau.", img: "nationalmuseum.jpg" },
             { id: "p_a16", lat: 50.0526, lng: 14.4146, city: "Prag", cat: "Aktivität", subtag: "relax", title: "Sauna Spot Dvorce", cost: 35, time: "2h", res: "Empfohlen", address: "Podolské nábř. 1184/5, 147 00 Prag", desc: "Sauna an der Moldau.", img: "saunasp.jpg" },
             { id: "p_a17", lat: 49.2434, lng: 16.5155, city: "Prag", cat: "Aktivität", subtag: "relax", title: "Infinit Maximus", cost: 50, time: "4h", res: "Empfohlen", address: "Hrázní 327/4a, 635 00 Brno", desc: "Riesige Saunawelt.", img: "infinitma.jpg" },
-
-            // PRAG - PARTY
             { id: "p_p1", lat: 50.1082, lng: 14.4432, city: "Prag", cat: "Party", subtag: "club", title: "Cross Club", cost: 15, time: "Bis 06:00", res: "Nein", address: "Plynární 1096/23, 170 00 Prag", desc: "Steampunk D&B.", img: "crosscl.jpg" },
             { id: "p_p2", lat: 50.0840, lng: 14.4143, city: "Prag", cat: "Party", subtag: "bar", title: "Hemingway Bar", cost: 40, time: "2h", res: "Zwingend", address: "Karolíny Světlé 26, 110 00 Prag", desc: "Absinth-Cocktails.", img: "hemingwayba.jpg" },
             { id: "p_p3", lat: 50.0852, lng: 14.4200, city: "Prag", cat: "Party", subtag: "bar", title: "Anonymous Bar", cost: 30, time: "2h", res: "Empfohlen", address: "Michalská 12, 110 00 Prag", desc: "Hidden Bar.", img: "anonymousba.jpg" },
@@ -348,7 +343,7 @@
             if (!isVisible) return null;
 
             return (
-                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl z-[9999] text-sm font-bold flex items-center gap-2 toast-enter">
+                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl z-[9999] text-sm font-bold flex items-center gap-2 toast-enter dark:bg-rose-900 dark:text-white dark:border dark:border-rose-700">
                     <span>{message}</span>
                 </div>
             );
@@ -474,7 +469,7 @@
                     <div id="map-container"></div>
                     <button 
                         onClick={handleLocateMe}
-                        className="absolute top-4 right-4 z-[500] bg-white p-2 rounded-xl shadow-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                        className="absolute top-4 right-4 z-[500] bg-white p-2 rounded-xl shadow-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                         title="Mein Standort"
                     >
                         <Icon name="crosshair" className="w-5 h-5" />
@@ -488,30 +483,31 @@
             const dict = DICTIONARY[city] || DICTIONARY["Transfer"];
 
             return (
-                <div className="fixed bottom-6 right-6 z-[100]">
+                <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 items-end">
+                    
                     {isOpen && (
-                        <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl p-4 w-64 border border-rose-100 mb-2 modal-enter">
-                            <h3 className="font-bold text-rose-900 mb-2 border-b border-rose-100 pb-1">Survival Kit: {city}</h3>
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 w-64 border border-rose-100 dark:border-slate-700 mb-2 modal-enter text-slate-800 dark:text-slate-200">
+                            <h3 className="font-bold text-rose-900 dark:text-rose-400 mb-2 border-b border-rose-100 dark:border-slate-700 pb-1">Survival Kit: {city}</h3>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">Hallo:</span>
-                                    <span className="font-bold text-slate-800">{dict.hello}</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Hallo:</span>
+                                    <span className="font-bold">{dict.hello}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">Bier:</span>
-                                    <span className="font-bold text-slate-800">{dict.beer}</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Bier:</span>
+                                    <span className="font-bold">{dict.beer}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">Prost:</span>
-                                    <span className="font-bold text-slate-800">{dict.cheers}</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Prost:</span>
+                                    <span className="font-bold">{dict.cheers}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">Danke:</span>
-                                    <span className="font-bold text-slate-800">{dict.thanks}</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Danke:</span>
+                                    <span className="font-bold">{dict.thanks}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-slate-500">Zahlen:</span>
-                                    <span className="font-bold text-slate-800">{dict.bill}</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Zahlen:</span>
+                                    <span className="font-bold">{dict.bill}</span>
                                 </div>
                             </div>
                         </div>
@@ -519,6 +515,7 @@
                     <button 
                         onClick={() => setIsOpen(!isOpen)}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center justify-center"
+                        title="Wörterbuch"
                     >
                         <span className="text-2xl">🗣️</span>
                     </button>
@@ -526,92 +523,85 @@
             );
         };
 
+        const ChallengeButton = () => {
+            const [showModal, setShowModal] = useState(false);
+            const [challenge, setChallenge] = useState("");
+
+            const handleChallenge = () => {
+                const random = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
+                setChallenge(random);
+                setShowModal(true);
+            };
+
+            return (
+                <>
+                    <button 
+                        onClick={handleChallenge}
+                        className="fixed bottom-6 right-24 z-[90] bg-rose-500 hover:bg-rose-600 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center justify-center"
+                        title="Tages Challenge"
+                    >
+                        <span className="text-2xl">🎲</span>
+                    </button>
+
+                    {showModal && (
+                        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-enter" onClick={() => setShowModal(false)}>
+                            <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl relative border-4 border-rose-200 dark:border-rose-900" onClick={e => e.stopPropagation()}>
+                                <div className="text-4xl mb-4">🎲</div>
+                                <h3 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2">Daily Challenge</h3>
+                                <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">
+                                    Vorgeschmack für Bingus & Amor:
+                                </p>
+                                <div className="bg-rose-50 dark:bg-slate-700 p-4 rounded-xl border border-rose-100 dark:border-slate-600 mb-6">
+                                    <p className="font-bold text-lg text-slate-800 dark:text-white leading-relaxed">"{challenge}"</p>
+                                </div>
+                                <button onClick={() => setShowModal(false)} className="bg-slate-900 dark:bg-rose-600 text-white px-6 py-2 rounded-lg font-bold text-sm w-full">Challenge Accepted!</button>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+
         const TripTimeline = () => {
             const [progress, setProgress] = useState(0);
-            const [currentSegment, setCurrentSegment] = useState(0);
 
             useEffect(() => {
                 const now = new Date();
-                
                 const start = new Date('2026-04-01T00:00:00');
                 const end = new Date('2026-04-10T23:59:59');
                 const totalDuration = end - start;
 
-                if (now < start) {
-                    setProgress(0);
-                    setCurrentSegment(0);
-                } else if (now > end) {
-                    setProgress(100);
-                    setCurrentSegment(4);
-                } else {
+                if (now < start) setProgress(0);
+                else if (now > end) setProgress(100);
+                else {
                     const elapsed = now - start;
-                    const p = (elapsed / totalDuration) * 100;
-                    setProgress(p);
-
-                    const day = now.getDate();
-                    if (day < 4) setCurrentSegment(1); 
-                    else if (day < 7) setCurrentSegment(2); 
-                    else setCurrentSegment(3); 
+                    setProgress((elapsed / totalDuration) * 100);
                 }
             }, []);
 
-            // Harmonischere Farben für die Leiste
-            const getSegmentColor = (index) => {
-                if (index === 1) return "bg-rose-300"; // Budapest (weicher)
-                if (index === 2) return "bg-amber-300"; // Wien (Gold)
-                return "bg-emerald-300"; // Prag (Grün)
-            };
-
-            const getFillWidth = (start, end) => {
-                if (progress < start) return 0;
-                if (progress > end) return 100;
-                return ((progress - start) / (end - start)) * 100;
-            };
-
             return (
-                <div className="w-full bg-white/50 border-b border-rose-100 p-4 sticky top-[72px] z-30 shadow-sm backdrop-blur-md hidden md:block pt-8">
-                    <div className="max-w-4xl mx-auto relative pb-2">
-                        
-                        {/* LABELS OBEN */}
-                        <div className="flex justify-between text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-wide relative">
-                            <div className="flex flex-col items-center absolute left-0 -ml-4" style={{top: '-25px'}}>
-                                <span className="text-xl mb-1">🛬</span>
-                                <span>Mi 01.04.</span>
-                            </div>
-                            <div className="absolute left-[16.5%] -ml-2 text-lg opacity-60 font-black text-rose-400" style={{top: '-20px'}}>🇭🇺 BUD</div>
-                            <div className="flex flex-col items-center absolute left-[33.3%] -ml-4" style={{top: '-25px'}}>
-                                <span className="text-xl mb-1">🚂</span>
-                                <span>Sa 04.04.</span>
-                            </div>
-                            <div className="absolute left-[50%] -ml-2 text-lg opacity-60 font-black text-amber-400" style={{top: '-20px'}}>🇦🇹 VIE</div>
-                            <div className="flex flex-col items-center absolute left-[66.6%] -ml-4" style={{top: '-25px'}}>
-                                <span className="text-xl mb-1">🚂</span>
-                                <span>Di 07.04.</span>
-                            </div>
-                            <div className="absolute left-[83.5%] -ml-2 text-lg opacity-60 font-black text-emerald-400" style={{top: '-20px'}}>🇨🇿 PRG</div>
-                            <div className="flex flex-col items-center absolute right-0 -mr-4" style={{top: '-25px'}}>
-                                <span className="text-xl mb-1">🏁</span>
-                                <span>Fr 10.04.</span>
-                            </div>
+                <div className="w-full pt-8 pb-4 hidden md:block"> 
+                    <div className="max-w-4xl mx-auto relative">
+                        {/* LABELS ROW */}
+                        <div className="grid grid-cols-6 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+                            <div className="flex flex-col items-start"><span className="text-xl">🛬</span><span>01.04</span></div>
+                            <div className="flex flex-col items-center"><span className="text-lg text-rose-400">🇭🇺 BUD</span></div>
+                            <div className="flex flex-col items-center"><span className="text-xl">🚂</span><span>04.04</span></div>
+                            <div className="flex flex-col items-center"><span className="text-lg text-amber-400">🇦🇹 VIE</span></div>
+                            <div className="flex flex-col items-center"><span className="text-xl">🚂</span><span>07.04</span></div>
+                            <div className="flex flex-col items-end"><span className="text-lg text-emerald-400">🇨🇿 PRG</span><span className="mr-1">10.04 🏁</span></div>
                         </div>
 
-                        {/* PROGRESS BAR */}
-                        <div className="relative w-full h-3 bg-rose-50 rounded-full overflow-hidden flex border border-rose-100 shadow-inner">
-                            <div className="w-1/3 h-full relative border-r border-white/50">
-                                <div className={`h-full ${getSegmentColor(1)}`} style={{width: `${getFillWidth(0, 33.3)}%`}}></div>
-                            </div>
-                            <div className="w-1/3 h-full relative border-r border-white/50">
-                                <div className={`h-full ${getSegmentColor(2)}`} style={{width: `${getFillWidth(33.3, 66.6)}%`}}></div>
-                            </div>
-                            <div className="w-1/3 h-full relative">
-                                <div className={`h-full ${getSegmentColor(3)}`} style={{width: `${getFillWidth(66.6, 100)}%`}}></div>
-                            </div>
+                        {/* PROGRESS BAR TRACK - Neutral Background now */}
+                        <div className="relative w-full h-4 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner">
+                            {/* ACTIVE FILL - Single Color */}
+                            <div className="h-full bg-rose-500 dark:bg-rose-600 transition-all duration-1000 ease-linear shadow-lg" style={{width: `${progress}%`}}></div>
                         </div>
 
-                        {/* BEER CURSOR */}
+                        {/* BEER CURSOR - Centered on track */}
                         <div 
-                            className="absolute top-[20px] text-2xl transition-all duration-1000 ease-linear beer-cursor z-10 filter drop-shadow-md" 
-                            style={{ left: `calc(${progress}% - 12px)` }}
+                            className="absolute top-[34px] text-2xl transition-all duration-1000 ease-linear beer-cursor z-10 filter drop-shadow-lg" 
+                            style={{ left: `calc(${progress}% - 15px)` }}
                         >
                             🍺
                         </div>
@@ -640,19 +630,19 @@
             };
 
             return (
-                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white/80 backdrop-blur-md p-3 rounded-2xl border border-rose-100 shadow-sm text-xs font-medium w-full sm:w-auto">
-                    <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-3 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm text-xs font-medium w-full sm:w-auto">
+                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-600 w-full sm:w-auto">
                         <input 
                             type="number" 
                             placeholder="100" 
-                            className="w-16 bg-transparent outline-none font-mono font-bold text-slate-700"
+                            className="w-16 bg-transparent outline-none font-mono font-bold text-slate-700 dark:text-slate-200"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                         />
                         <select 
                             value={currency} 
                             onChange={(e) => setCurrency(e.target.value)}
-                            className="bg-transparent outline-none text-slate-500 font-bold cursor-pointer"
+                            className="bg-transparent outline-none text-slate-500 dark:text-slate-400 font-bold cursor-pointer"
                         >
                             <option value="CHF">CHF</option>
                             <option value="HUF">HUF</option>
@@ -661,29 +651,29 @@
                         </select>
                     </div>
                     
-                    <div className="flex gap-4 w-full justify-between sm:justify-start px-2">
+                    <div className="flex gap-4 w-full justify-between sm:justify-start px-2 text-slate-700 dark:text-slate-300">
                         {currency !== 'CHF' && (
                             <div className="flex flex-col items-center">
                                 <span className="text-[9px] text-slate-400 font-bold uppercase">CHF</span>
-                                <span className="font-mono text-slate-700">{handleConvert('CHF')}</span>
+                                <span className="font-mono">{handleConvert('CHF')}</span>
                             </div>
                         )}
                         {currency !== 'HUF' && (
                             <div className="flex flex-col items-center">
                                 <span className="text-[9px] text-rose-400 font-bold uppercase">HUF</span>
-                                <span className="font-mono text-slate-700">{handleConvert('HUF')}</span>
+                                <span className="font-mono">{handleConvert('HUF')}</span>
                             </div>
                         )}
                         {currency !== 'EUR' && (
                             <div className="flex flex-col items-center">
                                 <span className="text-[9px] text-amber-500 font-bold uppercase">EUR</span>
-                                <span className="font-mono text-slate-700">{handleConvert('EUR')}</span>
+                                <span className="font-mono">{handleConvert('EUR')}</span>
                             </div>
                         )}
                         {currency !== 'CZK' && (
                             <div className="flex flex-col items-center">
                                 <span className="text-[9px] text-emerald-500 font-bold uppercase">CZK</span>
-                                <span className="font-mono text-slate-700">{handleConvert('CZK')}</span>
+                                <span className="font-mono">{handleConvert('CZK')}</span>
                             </div>
                         )}
                     </div>
@@ -725,25 +715,25 @@
 
             return (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-enter" onClick={onClose}>
-                    <div className="bg-white rounded-3xl w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl relative flex flex-col" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-xl max-h-[85vh] overflow-hidden shadow-2xl relative flex flex-col" onClick={e => e.stopPropagation()}>
                         
-                        <div className="p-5 border-b border-rose-100 flex justify-between items-center bg-rose-50/50">
-                            <h2 className="text-lg font-bold text-rose-900">Alternativen zu "{currentItem.title}"</h2>
-                            <button onClick={onClose} className="p-2 hover:bg-rose-100 rounded-full transition-colors"><Icon name="x" className="w-5 h-5 text-rose-400"/></button>
+                        <div className="p-5 border-b border-rose-100 dark:border-slate-700 flex justify-between items-center bg-rose-50/50 dark:bg-slate-700/50">
+                            <h2 className="text-lg font-bold text-rose-900 dark:text-rose-400">Alternativen zu "{currentItem.title}"</h2>
+                            <button onClick={onClose} className="p-2 hover:bg-rose-100 dark:hover:bg-slate-600 rounded-full transition-colors"><Icon name="x" className="w-5 h-5 text-rose-400"/></button>
                         </div>
 
-                        <div className="p-6 overflow-y-auto flex-1 custom-scroll bg-white">
+                        <div className="p-6 overflow-y-auto flex-1 custom-scroll bg-white dark:bg-slate-800">
                             <div className="space-y-3">
                                 {alternatives.length > 0 ? alternatives.map(alt => (
-                                    <div key={alt.id} className="border border-rose-100 rounded-2xl p-4 hover:border-rose-300 hover:shadow-md transition-all bg-white">
+                                    <div key={alt.id} className="border border-rose-100 dark:border-slate-700 rounded-2xl p-4 hover:border-rose-300 dark:hover:border-slate-500 hover:shadow-md transition-all bg-white dark:bg-slate-800">
                                         <div className="flex justify-between items-start mb-1">
-                                            <h4 className="font-bold text-slate-800">{alt.title}</h4>
-                                            <span className="text-xs font-mono font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-lg">{alt.cost}.-</span>
+                                            <h4 className="font-bold text-slate-800 dark:text-slate-200">{alt.title}</h4>
+                                            <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-slate-700 px-2 py-1 rounded-lg">{alt.cost}.-</span>
                                         </div>
-                                        <p className="text-xs text-slate-500 mb-2 line-clamp-2">{alt.desc}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-2 line-clamp-2">{alt.desc}</p>
                                         <div className="flex gap-3 text-[10px] text-slate-400 font-bold uppercase tracking-wide">
                                             <span className="flex items-center gap-1"><Icon name="clock" className="w-3 h-3"/> {alt.time}</span>
-                                            <span className="text-amber-600">{alt.res}</span>
+                                            <span className="text-amber-600 dark:text-amber-500">{alt.res}</span>
                                         </div>
                                     </div>
                                 )) : (
@@ -752,10 +742,10 @@
                             </div>
                         </div>
 
-                        <div className="p-5 border-t border-rose-100 bg-slate-50">
+                        <div className="p-5 border-t border-rose-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
                             <button 
                                 onClick={openWebSearch}
-                                className="w-full py-3 bg-white text-rose-600 text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-rose-50 transition-colors border-2 border-rose-100 shadow-sm"
+                                className="w-full py-3 bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 text-sm font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-rose-50 dark:hover:bg-slate-700 transition-colors border-2 border-rose-100 dark:border-slate-700 shadow-sm"
                             >
                                 <Icon name="search" className="w-4 h-4"/> 
                                 Google nach Weiterem fragen
@@ -820,33 +810,33 @@
             return (
                 <div className="p-4 pb-20 fade-in">
                     <div className="flex justify-center items-center mb-6 gap-4">
-                         <h2 className="text-xl font-bold text-rose-900">Dein Reiseplan 📅</h2>
+                         <h2 className="text-xl font-bold text-rose-900 dark:text-rose-400">Dein Reiseplan 📅</h2>
                          <button onClick={resetCalendar} className="text-[10px] text-slate-400 underline">Reset</button>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         {days.map(day => (
-                            <div key={day.id} className="bg-white rounded-xl shadow-sm border border-rose-100 overflow-hidden flex flex-col">
-                                <div className="bg-rose-50 p-2 text-center border-b border-rose-100">
-                                    <div className="font-bold text-rose-800">{day.date}</div>
-                                    <div className="text-[10px] text-slate-500 uppercase tracking-wide">{day.city}</div>
+                            <div key={day.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-rose-100 dark:border-slate-700 overflow-hidden flex flex-col">
+                                <div className="bg-rose-50 dark:bg-slate-700 p-2 text-center border-b border-rose-100 dark:border-slate-600">
+                                    <div className="font-bold text-rose-800 dark:text-rose-300">{day.date}</div>
+                                    <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wide">{day.city}</div>
                                 </div>
                                 <div className="p-2 space-y-2 flex-1">
                                     <textarea 
                                         placeholder="Morgen..." 
-                                        className="w-full text-xs p-2 bg-slate-50 rounded border border-slate-100 resize-none h-16 focus:border-rose-300 outline-none"
+                                        className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 resize-none h-16 focus:border-rose-300 outline-none text-slate-800 dark:text-slate-200"
                                         value={day.slots.mor}
                                         onChange={(e) => updateSlot(day.id, 'mor', e.target.value)}
                                     />
                                     <textarea 
                                         placeholder="Nachmittag..." 
-                                        className="w-full text-xs p-2 bg-slate-50 rounded border border-slate-100 resize-none h-16 focus:border-rose-300 outline-none"
+                                        className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 resize-none h-16 focus:border-rose-300 outline-none text-slate-800 dark:text-slate-200"
                                         value={day.slots.aft}
                                         onChange={(e) => updateSlot(day.id, 'aft', e.target.value)}
                                     />
                                     <textarea 
                                         placeholder="Abend..." 
-                                        className="w-full text-xs p-2 bg-slate-50 rounded border border-slate-100 resize-none h-16 focus:border-rose-300 outline-none"
+                                        className="w-full text-xs p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-700 resize-none h-16 focus:border-rose-300 outline-none text-slate-800 dark:text-slate-200"
                                         value={day.slots.eve}
                                         onChange={(e) => updateSlot(day.id, 'eve', e.target.value)}
                                     />
@@ -909,18 +899,18 @@
                 return `${val} ${currency}`;
             };
 
-            let themeClass = "border-slate-200";
-            let btnClass = "bg-slate-900 hover:bg-slate-800";
-            if (item.city === "Budapest") { themeClass = "border-rose-200"; btnClass = "bg-rose-600 hover:bg-rose-700"; }
-            if (item.city === "Wien") { themeClass = "border-amber-200"; btnClass = "bg-amber-600 hover:bg-amber-700"; }
-            if (item.city === "Prag") { themeClass = "border-emerald-200"; btnClass = "bg-emerald-600 hover:bg-emerald-700"; }
-            if (item.city === "Transfer") { themeClass = "border-indigo-200"; btnClass = "bg-indigo-600 hover:bg-indigo-700"; }
+            let themeClass = "border-slate-200 dark:border-slate-700";
+            let btnClass = "bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600";
+            if (item.city === "Budapest") { themeClass = "border-rose-200 dark:border-rose-900"; btnClass = "bg-rose-600 hover:bg-rose-700 dark:bg-rose-800 dark:hover:bg-rose-700"; }
+            if (item.city === "Wien") { themeClass = "border-amber-200 dark:border-amber-900"; btnClass = "bg-amber-600 hover:bg-amber-700 dark:bg-amber-800 dark:hover:bg-amber-700"; }
+            if (item.city === "Prag") { themeClass = "border-emerald-200 dark:border-emerald-900"; btnClass = "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-700"; }
+            if (item.city === "Transfer") { themeClass = "border-indigo-200 dark:border-indigo-900"; btnClass = "bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-800 dark:hover:bg-indigo-700"; }
 
             return (
-                <div className={`bg-white rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
+                <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
                     
                     {/* Header Image Area */}
-                    <div className="h-44 relative bg-slate-100 overflow-hidden">
+                    <div className="h-44 relative bg-slate-100 dark:bg-slate-700 overflow-hidden">
                         {!imgError && item.img ? (
                             <img src={imagePath} alt={item.title} className="w-full h-full object-cover transition-opacity duration-300" onError={() => setImgError(true)} />
                         ) : (
@@ -929,11 +919,11 @@
                             </div>
                         )}
                         <div className="absolute top-2 right-2 flex gap-1">
-                            <span className="bg-white/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-slate-900 shadow-sm backdrop-blur-sm">{item.cat}</span>
+                            <span className="bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 shadow-sm backdrop-blur-sm">{item.cat}</span>
                         </div>
                         <button 
                             onClick={(e) => { e.stopPropagation(); toggleFav(item.id); }}
-                            className="absolute top-2 left-2 p-2 bg-white/80 backdrop-blur rounded-full shadow-md hover:scale-110 transition-transform cursor-pointer z-20"
+                            className="absolute top-2 left-2 p-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur rounded-full shadow-md hover:scale-110 transition-transform cursor-pointer z-20"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={isFav ? "#f43f5e" : "none"} stroke={isFav ? "#f43f5e" : "#94a3b8"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
                                 className={`w-5 h-5 transition-all ${isFav ? 'heart-active' : ''}`}>
@@ -944,35 +934,35 @@
 
                     <div className="p-4 flex-1 flex flex-col">
                         <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-bold text-slate-900 text-lg leading-tight">{item.title}</h3>
+                            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg leading-tight">{item.title}</h3>
                             <div 
                                 className="text-right shrink-0 ml-2 cursor-pointer select-none" 
                                 onClick={() => setShowLocal(!showLocal)}
                                 title="Klick zum Währung wechseln"
                             >
-                                <div className="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg text-sm transition-colors hover:bg-indigo-100">
+                                <div className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-lg text-sm transition-colors hover:bg-indigo-100">
                                     {showLocal ? getLocalPrice() : `${item.cost}.-`}
                                 </div>
                             </div>
                         </div>
 
-                        <p className="text-xs text-slate-500 mb-5 leading-relaxed flex-1">{item.desc}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-5 leading-relaxed flex-1">{item.desc}</p>
 
                         <div className="grid grid-cols-5 gap-2 mb-4">
-                            <button onClick={() => openSearch('google')} className="col-span-2 py-2 bg-slate-50 text-slate-600 text-[10px] font-bold rounded-xl flex items-center justify-center gap-1 hover:bg-slate-100 transition-colors border border-slate-100">
+                            <button onClick={() => openSearch('google')} className="col-span-2 py-2 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded-xl flex items-center justify-center gap-1 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors border border-slate-100 dark:border-slate-600">
                                 <GoogleIcon /> Google
                             </button>
                             {item.cat !== 'Transport' && (
-                                <button onClick={() => openSearch('tiktok')} className="col-span-2 py-2 bg-white text-black text-[10px] font-bold rounded-xl flex items-center justify-center gap-1 hover:bg-slate-50 transition-colors border border-slate-200">
+                                <button onClick={() => openSearch('tiktok')} className="col-span-2 py-2 bg-white dark:bg-black text-black dark:text-white text-[10px] font-bold rounded-xl flex items-center justify-center gap-1 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors border border-slate-200 dark:border-slate-700">
                                     <TikTokIcon /> TikTok
                                 </button>
                             )}
-                             <button onClick={openMaps} className="col-span-1 py-2 bg-slate-50 text-slate-600 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors border border-slate-100" title="Karte">
+                             <button onClick={openMaps} className="col-span-1 py-2 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors border border-slate-100 dark:border-slate-600" title="Karte">
                                 <Icon name="map-pin" className="w-4 h-4"/>
                             </button>
                         </div>
 
-                        <div className="border-t border-slate-50 pt-3 mt-auto space-y-3">
+                        <div className="border-t border-slate-50 dark:border-slate-700 pt-3 mt-auto space-y-3">
                             <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wide">
                                 <span className="flex items-center gap-1"><Icon name="clock" className="w-3 h-3"/> {item.time}</span>
                                 <span className={`px-2 py-0.5 rounded ${getResBadge(item.res)}`}>Res: {item.res}</span>
@@ -1000,6 +990,21 @@
             const [catFilter, setCatFilter] = useState("Alle");
             const [modalOpen, setModalOpen] = useState(false);
             const [modalItem, setModalItem] = useState(null);
+            
+            // Dark Mode State
+            const [darkMode, setDarkMode] = useState(false);
+
+            useEffect(() => {
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.add('bg-pattern-dark');
+                    document.body.classList.remove('bg-pattern-light');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.add('bg-pattern-light');
+                    document.body.classList.remove('bg-pattern-dark');
+                }
+            }, [darkMode]);
             
             const [toastMsg, setToastMsg] = useState("");
             const [showToast, setShowToast] = useState(false);
@@ -1073,25 +1078,34 @@
             const cities = ["Budapest", "Transfer", "Wien", "Prag"];
 
             return (
-                <div className="min-h-screen max-w-7xl mx-auto pb-20">
-                    <header className="bg-white/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100 shadow-sm mb-6 rounded-b-[30px]">
+                <div className={`min-h-screen max-w-7xl mx-auto pb-20 transition-colors duration-500 ${darkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 sticky top-0 z-50 border-b border-rose-100 dark:border-slate-800 shadow-sm mb-6 rounded-b-[30px] transition-colors duration-300">
                         <div className="flex flex-col gap-4 max-w-7xl mx-auto">
                             <div className="flex flex-row justify-between items-center gap-4">
                                 <div>
-                                    <h1 className="text-xl font-bold tracking-tighter text-rose-900 flex items-center gap-2">
-                                        Bingus & Amor <span className="bg-rose-100 text-rose-600 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
+                                    <h1 className="text-xl font-bold tracking-tighter text-rose-900 dark:text-rose-400 flex items-center gap-2">
+                                        Bingus & Amor <span className="bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-200 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
                                     </h1>
-                                    <p className="text-xs text-rose-400 mt-1 font-bold md:block hidden">
+                                    <p className="text-xs text-rose-400 dark:text-slate-400 mt-1 font-bold md:block hidden">
                                         {tripActive ? "Der Trip läuft! 🌍 Viel Spaß!" : (daysLeft > 0 ? `⏳ Noch ${daysLeft} Tage bis zum Abflug! ✈️` : "Trip vorbei 👋")}
                                     </p>
                                 </div>
                                 
-                                <div className="hidden md:block">
+                                <div className="hidden md:flex items-center gap-3">
                                    <CurrencyConverter />
+                                   
+                                   {/* Dark Mode Toggle */}
+                                   <button 
+                                        onClick={() => setDarkMode(!darkMode)} 
+                                        className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-rose-100 dark:border-slate-700 shadow-sm text-slate-600 dark:text-yellow-400 transition-all hover:scale-105"
+                                        title={darkMode ? "Licht an" : "Licht aus"}
+                                   >
+                                        <Icon name={darkMode ? "sun" : "moon"} className="w-4 h-4"/>
+                                   </button>
                                 </div>
                                 
                                 <button className="md:hidden p-2" onClick={toggleMenu}>
-                                    <Icon name={isMenuOpen ? "x" : "menu"} className="w-6 h-6 text-slate-700"/>
+                                    <Icon name={isMenuOpen ? "x" : "menu"} className="w-6 h-6 text-slate-700 dark:text-slate-200"/>
                                 </button>
                             </div>
                         </div>
@@ -1104,18 +1118,18 @@
                          {/* Desktop Navigation & Filters */}
                          <div className="hidden md:flex gap-4 items-center">
                              <div className="flex gap-2">
-                                <button onClick={() => setView('hub')} className={`px-4 py-2 rounded-lg font-bold text-sm ${view === 'hub' ? 'bg-rose-50 text-rose-700' : 'text-slate-500 hover:bg-slate-50'}`}>Hub</button>
-                                <button onClick={() => setView('calendar')} className={`px-4 py-2 rounded-lg font-bold text-sm ${view === 'calendar' ? 'bg-rose-50 text-rose-700' : 'text-slate-500 hover:bg-slate-50'}`}>Kalender</button>
-                                <button onClick={() => setView('map')} className={`px-4 py-2 rounded-lg font-bold text-sm ${view === 'map' ? 'bg-rose-50 text-rose-700' : 'text-slate-500 hover:bg-slate-50'}`}>Karte 🗺️</button>
+                                <button onClick={() => setView('hub')} className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${view === 'hub' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>Hub</button>
+                                <button onClick={() => setView('calendar')} className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${view === 'calendar' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>Kalender</button>
+                                <button onClick={() => setView('map')} className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${view === 'map' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>Karte 🗺️</button>
                              </div>
-                             <div className="h-6 w-px bg-slate-200"></div>
+                             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
                              
                              {(view === 'hub' || view === 'map') && (
                                  <div className="flex gap-2 items-center w-full">
-                                     <button onClick={() => { setCityFilter("Favs"); setCatFilter("Alle"); }} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${cityFilter === "Favs" ? 'bg-rose-500 text-white' : 'text-slate-500 hover:bg-slate-50'}`}>❤️ Favs</button>
-                                     <div className="h-4 w-px bg-slate-200"></div>
+                                     <button onClick={() => { setCityFilter("Favs"); setCatFilter("Alle"); }} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${cityFilter === "Favs" ? 'bg-rose-500 text-white' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>❤️ Favs</button>
+                                     <div className="h-4 w-px bg-slate-200 dark:bg-slate-700"></div>
                                      {cities.map(c => (
-                                         <button key={c} onClick={() => { setCityFilter(c); setCatFilter("Alle"); }} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${cityFilter === c ? 'bg-slate-800 text-white' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                         <button key={c} onClick={() => { setCityFilter(c); setCatFilter("Alle"); }} className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${cityFilter === c ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                                              {c === "Transfer" ? "🚄" : c.substring(0,3).toUpperCase()}
                                          </button>
                                      ))}
@@ -1124,7 +1138,7 @@
                                      {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
                                          <div className="flex gap-2 ml-auto">
                                              {["Alle", "Essen", "Aktivität", "Party", "Hotel"].map(cat => (
-                                                 <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1 rounded-full text-[10px] font-bold border ${catFilter === cat ? 'bg-rose-100 border-rose-300 text-rose-700' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'}`}>{cat}</button>
+                                                 <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1 rounded-full text-[10px] font-bold border transition-colors ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300'}`}>{cat}</button>
                                              ))}
                                          </div>
                                      )}
@@ -1134,24 +1148,33 @@
                     </header>
                     
                     {/* Mobile Menu */}
-                    <div className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? 'max-h-[600px] border-t border-slate-100 mt-4 pt-4 px-4 bg-white/95 backdrop-blur-lg fixed left-0 right-0 z-40 shadow-lg top-[70px]' : 'max-h-0'}`}>
+                    <div className={`overflow-hidden transition-all duration-300 md:hidden ${isMenuOpen ? 'max-h-[600px] border-t border-slate-100 dark:border-slate-700 mt-4 pt-4 px-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg fixed left-0 right-0 z-40 shadow-lg top-[70px]' : 'max-h-0'}`}>
                         <div className="space-y-4 pb-4">
-                            <p className="text-xs text-rose-400 font-bold text-center">
-                                {tripActive ? "Der Trip läuft! 🌍" : (daysLeft > 0 ? `⏳ Noch ${daysLeft} Tage!` : "Trip vorbei 👋")}
-                            </p>
+                            <div className="flex justify-between items-center">
+                                <p className="text-xs text-rose-400 font-bold">
+                                    {tripActive ? "Der Trip läuft! 🌍" : (daysLeft > 0 ? `⏳ Noch ${daysLeft} Tage!` : "Trip vorbei 👋")}
+                                </p>
+                                <button 
+                                    onClick={() => setDarkMode(!darkMode)} 
+                                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"
+                                >
+                                    <Icon name={darkMode ? "sun" : "moon"} className="w-4 h-4 text-slate-600 dark:text-yellow-400"/>
+                                </button>
+                            </div>
+                            
                             <CurrencyConverter />
                             <div className="flex justify-center gap-2">
-                                <button onClick={() => { setView('hub'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'hub' ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600'}`}>Hub</button>
-                                <button onClick={() => { setView('calendar'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'calendar' ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600'}`}>Kalender</button>
-                                <button onClick={() => { setView('map'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'map' ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600'}`}>Karte</button>
+                                <button onClick={() => { setView('hub'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'hub' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Hub</button>
+                                <button onClick={() => { setView('calendar'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'calendar' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Kalender</button>
+                                <button onClick={() => { setView('map'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'map' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Karte</button>
                             </div>
                             
                             {(view === 'hub' || view === 'map') && (
                                 <div className="space-y-3">
                                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                        <button onClick={() => setCityFilter("Favs")} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap ${cityFilter === "Favs" ? 'bg-rose-500 text-white' : 'bg-rose-50 text-rose-600'}`}>❤️ Favs</button>
+                                        <button onClick={() => setCityFilter("Favs")} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap ${cityFilter === "Favs" ? 'bg-rose-500 text-white' : 'bg-rose-50 dark:bg-slate-800 text-rose-600 dark:text-rose-400'}`}>❤️ Favs</button>
                                         {cities.map(c => (
-                                            <button key={c} onClick={() => setCityFilter(c)} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap ${cityFilter === c ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                            <button key={c} onClick={() => setCityFilter(c)} className={`px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap ${cityFilter === c ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-900' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
                                                 {c === "Transfer" ? "🚄" : c.toUpperCase()}
                                             </button>
                                         ))}
@@ -1159,7 +1182,7 @@
                                     {cityFilter !== "Transfer" && cityFilter !== "Favs" && (
                                         <div className="flex gap-2 overflow-x-auto no-scrollbar">
                                             {["Alle", "Essen", "Aktivität", "Party", "Hotel"].map(cat => (
-                                                <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${catFilter === cat ? 'bg-rose-100 border-rose-300 text-rose-700' : 'bg-white border-slate-200 text-slate-500'}`}>{cat}</button>
+                                                <button key={cat} onClick={() => setCatFilter(cat)} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${catFilter === cat ? 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-300' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>{cat}</button>
                                             ))}
                                         </div>
                                     )}
@@ -1184,7 +1207,7 @@
                                     ))}
                                 </div>
                                 {filteredDB.length === 0 && (
-                                    <div className="text-center py-20 text-rose-300 flex flex-col items-center">
+                                    <div className="text-center py-20 text-rose-300 dark:text-slate-600 flex flex-col items-center">
                                         <Icon name="heart-crack" className="w-12 h-12 mb-2 opacity-50"/>
                                         <p>Keine Einträge gefunden.</p>
                                     </div>
@@ -1194,10 +1217,10 @@
                             <TripCalendar />
                         ) : (
                             <div className="p-4 fade-in h-full relative">
-                                <div className="bg-white rounded-3xl p-2 shadow-lg h-full border-4 border-white">
+                                <div className="bg-white dark:bg-slate-800 rounded-3xl p-2 shadow-lg h-full border-4 border-white dark:border-slate-700">
                                     <MapView items={filteredDB} activeCity={cityFilter === 'Favs' ? 'Budapest' : cityFilter} />
                                 </div>
-                                <div className="mt-4 text-center text-xs text-slate-400 font-bold bg-white/80 inline-block px-4 py-2 rounded-full backdrop-blur-sm mx-auto flex flex-wrap justify-center border border-white gap-3">
+                                <div className="mt-4 text-center text-xs text-slate-400 dark:text-slate-500 font-bold bg-white/80 dark:bg-slate-800/80 inline-block px-4 py-2 rounded-full backdrop-blur-sm mx-auto flex flex-wrap justify-center border border-white dark:border-slate-700 gap-3">
                                     <span>🥐 Frühstück/Café</span>
                                     <span>🍔 Street Food</span>
                                     <span>🥘 Restaurant</span>
@@ -1209,10 +1232,11 @@
                         )}
                     </main>
 
-                    {/* Survival Dictionary FAB */}
+                    {/* FABs */}
                     {view !== 'calendar' && cityFilter !== 'Favs' && (
                         <SurvivalDictionary city={cityFilter} />
                     )}
+                    <ChallengeButton />
 
                     <StaticAlternativesModal isOpen={modalOpen} onClose={() => setModalOpen(false)} currentItem={modalItem} />
                     <Toast message={toastMsg} isVisible={showToast} onClose={() => setShowToast(false)} />
