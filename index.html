@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingus & Amor's Trip V32 Fix 🚀</title>
+    <title>Bingus & Amor's Trip V35 🚀</title>
     
-    <!-- Tailwind CSS with Dark Mode Config -->
+    <!-- Tailwind CSS with Dark Mode & Drunk Mode Config -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,6 +14,7 @@
                 extend: {
                     colors: {
                         rose: { 950: '#4c0519' }, 
+                        neon: { green: '#39ff14', pink: '#ff00ff' }
                     },
                     fontFamily: {
                         sans: ['Quicksand', 'sans-serif'],
@@ -22,6 +23,13 @@
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'bounce-slow': 'bounce 2s infinite',
+                        'wobble': 'wobble 1s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        wobble: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        }
                     }
                 }
             }
@@ -53,6 +61,28 @@
             -webkit-tap-highlight-color: transparent;
         }
         
+        /* Drunk Mode Styles */
+        body.drunk-mode {
+            background-color: #000 !important;
+            color: #39ff14 !important;
+            font-family: 'Fredoka', cursive !important;
+            overflow-x: hidden;
+        }
+        body.drunk-mode * {
+            border-color: #ff00ff !important;
+        }
+        body.drunk-mode h1, body.drunk-mode h2, body.drunk-mode h3 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: wobble 2s infinite ease-in-out;
+            color: #ff00ff !important;
+            text-shadow: 2px 2px 0px #39ff14;
+        }
+        body.drunk-mode .card-hover {
+            transform: scale(1.02) rotate(1deg);
+            background: #111 !important;
+        }
+
         .bg-pattern-light {
             background-color: #fff1f2;
             background-image: 
@@ -137,10 +167,10 @@
         const FX_RATES = { 'HUF': 430, 'EUR': 1.06, 'CZK': 26 };
 
         const DICTIONARY = {
-            "Budapest": { hello: "Szia", cheers: "Egészségedre", beer: "Sör", thanks: "Köszönöm", bill: "A számlát kérem" },
-            "Wien": { hello: "Servus", cheers: "Prost", beer: "Krügerl", thanks: "Danke", bill: "Zahlen bitte" },
-            "Prag": { hello: "Ahoj", cheers: "Na zdraví", beer: "Pivo", thanks: "Děkuji", bill: "Účet prosím" },
-            "Transfer": { hello: "Choo Choo", cheers: "Prost", beer: "Bier", thanks: "Danke", bill: "Ticket" }
+            "Budapest": { hello: "Szia", cheers: "Egészségedre", beer: "Sör", thanks: "Köszönöm", bill: "A számlát kérem", lang: "hu-HU" },
+            "Wien": { hello: "Servus", cheers: "Prost", beer: "Krügerl", thanks: "Danke", bill: "Zahlen bitte", lang: "de-AT" },
+            "Prag": { hello: "Ahoj", cheers: "Na zdraví", beer: "Pivo", thanks: "Děkuji", bill: "Účet prosím", lang: "cs-CZ" },
+            "Transfer": { hello: "Choo Choo", cheers: "Prost", beer: "Bier", thanks: "Danke", bill: "Ticket", lang: "en-US" }
         };
 
         const CHALLENGES = [
@@ -306,8 +336,6 @@
             { id: "p_f27", lat: 50.0753, lng: 14.4513, city: "Prag", cat: "Essen", subtag: "cafe", title: "Coffee Room", cost: 15, time: "45min", res: "Nein", address: "Korunní 74, 101 00 Prag", desc: "Avocado Toast.", img: "coffeero.jpg" },
             { id: "p_f28", lat: 50.0654, lng: 14.4199, city: "Prag", cat: "Essen", subtag: "casual", title: "U Kroka", cost: 25, time: "1.5h", res: "Zwingend", address: "Vratislavova 12/28, 128 00 Prag", desc: "Abseits des Zentrums. Top Preis.", img: "ukr.jpg" },
             { id: "p_f29", lat: 50.0841, lng: 14.4145, city: "Prag", cat: "Essen", subtag: "fine", title: "Lehká Hlava", cost: 30, time: "1.5h", res: "Empfohlen", address: "Boršov 280/2, 110 00 Prag", desc: "Vegetarisch, spacig.", img: "lehkhl.jpg" },
-
-            // PRAG - AKTIVITÄT
             { id: "p_a1", lat: 50.0880, lng: 14.4241, city: "Prag", cat: "Aktivität", subtag: "relax", title: "Bier Spa Bernard", cost: 90, time: "1h", res: "Zwingend", address: "Týn 10, 110 00 Prag", desc: "Baden in Bier.", img: "biersp.jpg" },
             { id: "p_a2", lat: 50.0813, lng: 14.4285, city: "Prag", cat: "Aktivität", subtag: "culture", title: "Nuklearbunker Tour", cost: 25, time: "2h", res: "Ticket", address: "Václavské nám. 45 (Hotel Jalta), 110 00 Prag", desc: "Ex-Sowjet Bunker.", img: "nuklearbunkerto.jpg" },
             { id: "p_a3", lat: 50.0789, lng: 14.4132, city: "Prag", cat: "Aktivität", subtag: "relax", title: "Tretboot fahren", cost: 20, time: "1h", res: "Nein", address: "Slovanský ostrov, 110 00 Prag", desc: "Auf der Moldau (Slovanský Insel).", img: "tretbootfa.jpg" },
@@ -362,7 +390,7 @@
             );
         };
         
-        const CurrencyConverter = () => {
+        const CurrencyConverter = ({ city }) => {
             const [amount, setAmount] = useState('');
             const [currency, setCurrency] = useState('CHF');
             
@@ -380,6 +408,14 @@
                 
                 return Math.round(inCHF * FX_RATES[targetCurr]).toLocaleString();
             };
+
+            // Calculate Beer Index
+            let beerPriceCHF = 0;
+            if (city === 'Budapest') beerPriceCHF = 2.5;
+            else if (city === 'Wien') beerPriceCHF = 5.5;
+            else if (city === 'Prag') beerPriceCHF = 2.2;
+            
+            const beersFor10CHF = beerPriceCHF > 0 ? (10 / beerPriceCHF).toFixed(1) : '-';
 
             return (
                 <div className="flex flex-col sm:flex-row items-center gap-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-3 rounded-2xl border border-rose-100 dark:border-slate-700 shadow-sm text-xs font-medium w-full sm:w-auto">
@@ -404,30 +440,18 @@
                     </div>
                     
                     <div className="flex gap-4 w-full justify-between sm:justify-start px-2 text-slate-700 dark:text-slate-300">
-                        {currency !== 'CHF' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-slate-400 font-bold uppercase">CHF</span>
-                                <span className="font-mono">{handleConvert('CHF')}</span>
-                            </div>
-                        )}
-                        {currency !== 'HUF' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-rose-400 font-bold uppercase">HUF</span>
-                                <span className="font-mono">{handleConvert('HUF')}</span>
-                            </div>
-                        )}
-                        {currency !== 'EUR' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-amber-500 font-bold uppercase">EUR</span>
-                                <span className="font-mono">{handleConvert('EUR')}</span>
-                            </div>
-                        )}
-                        {currency !== 'CZK' && (
-                            <div className="flex flex-col items-center">
-                                <span className="text-[9px] text-emerald-500 font-bold uppercase">CZK</span>
-                                <span className="font-mono">{handleConvert('CZK')}</span>
-                            </div>
-                        )}
+                         {/* Simplified Converter Display */}
+                         <div className="flex flex-col items-center">
+                            <span className="text-[9px] text-slate-400 font-bold uppercase">{city === 'Budapest' ? 'HUF' : city === 'Prag' ? 'CZK' : 'EUR'}</span>
+                            <span className="font-mono">{handleConvert(city === 'Budapest' ? 'HUF' : city === 'Prag' ? 'CZK' : 'EUR')}</span>
+                        </div>
+                        
+                        {/* Beer Index */}
+                        <div className="w-px h-8 bg-slate-200 dark:bg-slate-600"></div>
+                        <div className="flex flex-col items-center" title="Bier-Index: Wie viel Bier kriegst du für 10 CHF?">
+                             <span className="text-[10px] text-amber-500 font-bold uppercase">🍺 / 10.-</span>
+                             <span className="font-bold">{beersFor10CHF}</span>
+                        </div>
                     </div>
                 </div>
             );
@@ -449,7 +473,7 @@
         );
 
         // --- MAP COMPONENT ---
-        const MapView = ({ items, activeCity }) => {
+        const MapView = ({ items, activeCity, drunkMode }) => {
             const mapRef = useRef(null);
             const markersRef = useRef(L.featureGroup());
             const mapContainerRef = useRef(null);
@@ -497,11 +521,49 @@
                 }).addTo(map);
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 
-                // Location Found Event
+                // Location Found Event & Distance Radar
                 map.on('locationfound', (e) => {
                      L.circle(e.latlng, { radius: e.accuracy / 2, color: '#f43f5e', fillColor: '#f43f5e', fillOpacity: 0.2 }).addTo(map);
                      L.circleMarker(e.latlng, { radius: 8, color: '#fff', fillColor: '#f43f5e', fillOpacity: 1 }).bindPopup("Du bist hier!").addTo(map).openPopup();
                      map.flyTo(e.latlng, 15);
+
+                     // Distance Radar Logic
+                     let nearestDist = Infinity;
+                     let nearestName = "";
+
+                     items.forEach(i => {
+                        if (i.lat && i.lng && (i.cat === 'Party' || i.cat === 'Essen')) {
+                            const dist = map.distance(e.latlng, [i.lat, i.lng]);
+                            if (dist < nearestDist) {
+                                nearestDist = dist;
+                                nearestName = i.title;
+                            }
+                        }
+                     });
+
+                     if (nearestName && nearestDist < 5000) { // Only show if < 5km
+                         // Simple Toast for Radar
+                         const radarDiv = document.createElement('div');
+                         radarDiv.className = "leaflet-control leaflet-bar";
+                         radarDiv.style.backgroundColor = "white";
+                         radarDiv.style.padding = "10px";
+                         radarDiv.style.borderRadius = "10px";
+                         radarDiv.style.fontWeight = "bold";
+                         radarDiv.style.color = "#4c0519";
+                         radarDiv.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+                         radarDiv.innerHTML = `📡 Radar: ${Math.round(nearestDist)}m bis ${nearestName} 🍺`;
+                         
+                         // Clean up old control if exists (simplified)
+                         const oldControl = document.getElementById('radar-control');
+                         if(oldControl) oldControl.remove();
+                         
+                         radarDiv.id = 'radar-control';
+                         const RadarControl = L.Control.extend({
+                             onAdd: () => radarDiv,
+                             onRemove: () => {}
+                         });
+                         map.addControl(new RadarControl({ position: 'topleft' }));
+                     }
                 });
                  
                 map.on('locationerror', (e) => {
@@ -533,9 +595,14 @@
                 markersLayer.clearLayers();
 
                 items.forEach(item => {
+                    // Drunk Mode Filter: Show only Hotel + Food (Street/Cafe likely needed) + Party
+                    if (drunkMode) {
+                        if (item.cat === 'Aktivität' || item.cat === 'Transport') return;
+                    }
+
                     if (item.lat && item.lng && item.lat !== 0) {
                         const emoji = getMapEmoji(item);
-                        const iconHtml = `<div class="emoji-marker">${emoji}</div>`;
+                        const iconHtml = `<div class="emoji-marker" style="font-size: ${drunkMode ? '40px' : '28px'}">${emoji}</div>`;
                         const customIcon = L.divIcon({
                             html: iconHtml,
                             className: 'bg-transparent',
@@ -567,7 +634,7 @@
                     }
                 });
 
-            }, [items, activeCity]);
+            }, [items, activeCity, drunkMode]);
 
             const handleLocateMe = () => {
                 if (mapInstanceRef.current) {
@@ -593,6 +660,14 @@
             const [isOpen, setIsOpen] = useState(false);
             const dict = DICTIONARY[city] || DICTIONARY["Transfer"];
 
+            const speak = (text) => {
+                if ('speechSynthesis' in window) {
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = dict.lang || 'en-US';
+                    window.speechSynthesis.speak(u);
+                }
+            };
+
             return (
                 <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 items-end">
                     
@@ -603,26 +678,15 @@
                                 <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full"><Icon name="x" className="w-4 h-4 text-slate-400"/></button>
                             </div>
                             <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-slate-500 dark:text-slate-400">Hallo:</span>
-                                    <span className="font-bold">{dict.hello}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-500 dark:text-slate-400">Bier:</span>
-                                    <span className="font-bold">{dict.beer}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-500 dark:text-slate-400">Prost:</span>
-                                    <span className="font-bold">{dict.cheers}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-500 dark:text-slate-400">Danke:</span>
-                                    <span className="font-bold">{dict.thanks}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-slate-500 dark:text-slate-400">Zahlen:</span>
-                                    <span className="font-bold">{dict.bill}</span>
-                                </div>
+                                {Object.entries(dict).filter(([key]) => key !== 'lang').map(([key, val]) => (
+                                    <div key={key} className="flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 p-1 rounded" onClick={() => speak(val)}>
+                                        <span className="text-slate-500 dark:text-slate-400 capitalize">{key}:</span>
+                                        <div className="flex items-center gap-1">
+                                            <span className="font-bold">{val}</span>
+                                            <Icon name="volume-2" className="w-3 h-3 text-rose-400"/>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}
@@ -637,13 +701,73 @@
             );
         };
 
+        const AlcoholTrackerButton = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [counts, setCounts] = useState({ beer: 0, wine: 0, shots: 0 });
+
+            const updateCount = (type, delta) => {
+                setCounts(prev => ({ ...prev, [type]: Math.max(0, prev[type] + delta) }));
+            };
+
+            const totalDrinks = counts.beer + counts.wine + counts.shots;
+            let status = "Nüchtern";
+            if (totalDrinks > 2) status = "Angewärmt";
+            if (totalDrinks > 5) status = "Gut dabei";
+            if (totalDrinks > 8) status = "Spricht fließend Ungarisch";
+            if (totalDrinks > 12) status = "Kritisch";
+
+            return (
+                <div className="fixed bottom-6 left-6 z-[100] flex flex-col gap-2">
+                   {isOpen && (
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-4 w-64 border border-rose-100 dark:border-slate-700 mb-2 modal-enter text-slate-800 dark:text-slate-200">
+                             <div className="flex justify-between items-center mb-2 border-b border-rose-100 dark:border-slate-700 pb-1">
+                                <h3 className="font-bold text-rose-900 dark:text-rose-400">Pegel-Rechner 🍺</h3>
+                                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-rose-50 dark:hover:bg-slate-700 rounded-full"><Icon name="x" className="w-4 h-4 text-slate-400"/></button>
+                            </div>
+                            <div className="space-y-3 mb-3">
+                                {Object.entries(counts).map(([type, count]) => (
+                                    <div key={type} className="flex justify-between items-center">
+                                        <span className="capitalize font-medium">{type}</span>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => updateCount(type, -1)} className="w-6 h-6 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold">-</button>
+                                            <span className="w-4 text-center">{count}</span>
+                                            <button onClick={() => updateCount(type, 1)} className="w-6 h-6 bg-rose-100 dark:bg-rose-900 rounded-full flex items-center justify-center font-bold text-rose-600">+</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="text-center pt-2 border-t border-slate-100 dark:border-slate-700">
+                                <div className="text-xs text-slate-500 uppercase">Status</div>
+                                <div className="font-bold text-rose-500">{status}</div>
+                            </div>
+                        </div>
+                   )}
+                   <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center justify-center"
+                        title="Pegel Tracker"
+                    >
+                        <span className="text-2xl">🍺</span>
+                    </button>
+                </div>
+            );
+        };
+
         const ChallengeButton = () => {
             const [showModal, setShowModal] = useState(false);
             const [challenge, setChallenge] = useState("");
 
             const handleChallenge = () => {
-                const random = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
-                setChallenge(random);
+                // Fixed teaser logic: always show the first one if trip hasn't started
+                const now = new Date();
+                const start = new Date('2026-04-01');
+                
+                if (now < start) {
+                    setChallenge(CHALLENGES[0]); 
+                } else {
+                     const random = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
+                     setChallenge(random);
+                }
                 setShowModal(true);
             };
 
@@ -651,7 +775,7 @@
                 <>
                     <button 
                         onClick={handleChallenge}
-                        className="fixed bottom-6 right-24 z-[90] bg-rose-500 hover:bg-rose-600 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center justify-center"
+                        className="fixed bottom-24 right-6 z-[90] bg-rose-500 hover:bg-rose-600 text-white p-4 rounded-full shadow-xl transition-transform hover:scale-110 flex items-center justify-center"
                         title="Tages Challenge"
                     >
                         <span className="text-2xl">🎲</span>
@@ -686,6 +810,7 @@
             useEffect(() => {
                 const interval = setInterval(() => {
                     const now = new Date();
+                    // ZIELZEIT: 1. April 2026, 18:30 Uhr (Abflug Basel)
                     const target = new Date('2026-04-01T18:30:00');
                     const diff = target - now;
                     
@@ -697,6 +822,7 @@
                             seconds: Math.floor((diff / 1000) % 60),
                         });
                     } else {
+                        // Trip hat begonnen
                         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
                     }
                 }, 1000);
@@ -714,93 +840,124 @@
                 </div>
             );
         };
-
-        // --- NEW COMPONENTS FOR FOOD ROULETTE ---
         
-        const FoodRouletteButton = ({ spin, city }) => {
-             if (city === 'Transfer') return null;
-             return (
-                 <button 
-                    onClick={spin}
-                    className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                    title="Food Roulette"
-                >
-                    <span>🎲</span> Hunger?
-                </button>
-             );
-        };
+        // --- Food Roulette Component (Consolidated) ---
+        const FoodRoulette = ({ city, toggleFav }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [selectedPlace, setSelectedPlace] = useState(null);
+            const [isSpinning, setIsSpinning] = useState(false);
+            const [added, setAdded] = useState(false);
 
-        const FoodRouletteModal = ({ isOpen, onClose, selectedPlace, isSpinning, added, handleAddToFav }) => {
-            if (!isOpen) return null;
+            const spin = () => {
+                setIsSpinning(true);
+                setShowModal(true);
+                setAdded(false);
+                
+                const foodPlaces = DB.filter(item => item.city === city && item.cat === 'Essen');
+                
+                let count = 0;
+                const maxCount = 20;
+                const interval = setInterval(() => {
+                    const random = foodPlaces[Math.floor(Math.random() * foodPlaces.length)];
+                    setSelectedPlace(random);
+                    count++;
+                    if(count > maxCount) {
+                        clearInterval(interval);
+                        setIsSpinning(false);
+                    }
+                }, 100);
+            };
+
+            const handleAddToFav = () => {
+                if (selectedPlace) {
+                    toggleFav(selectedPlace.id);
+                    setAdded(true);
+                    setTimeout(() => setShowModal(false), 1500);
+                }
+            };
+
+            if (city === 'Transfer') return null;
 
             return (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={onClose}>
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
-                        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full z-10"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
-                        
-                        <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
-                        
-                        {selectedPlace && (
-                            <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
-                                <div className="h-48 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner group">
-                                        <img src={selectedPlace.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'} />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                                        <div className="absolute bottom-2 left-2 text-white font-bold text-sm bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
-                                        {selectedPlace.subtag}
-                                        </div>
-                                </div>
-                                
-                                <h4 className="font-bold text-2xl text-slate-800 dark:text-white mb-2 leading-tight">{selectedPlace.title}</h4>
-                                
-                                <div className="flex justify-center gap-2 mb-4">
-                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 flex items-center gap-1">
-                                        <Icon name="clock" className="w-3 h-3"/> {selectedPlace.time}
-                                    </span>
-                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
-                                        Res: {selectedPlace.res}
-                                    </span>
-                                </div>
+                <>
+                    <button 
+                        onClick={spin}
+                        className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                        title="Food Roulette"
+                    >
+                        <span>🎲</span> Hunger?
+                    </button>
 
-                                <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
-                                    {selectedPlace.desc}
-                                </p>
+                    {showModal && (
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={() => setShowModal(false)}>
+                            <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
+                                <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full z-10"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
                                 
-                                <div className="font-mono text-2xl text-amber-600 dark:text-amber-400 font-bold mb-6">
-                                    ca. {selectedPlace.cost}.-
-                                </div>
+                                <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
+                                
+                                {selectedPlace && (
+                                    <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
+                                        <div className="h-48 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner group">
+                                             <img src={selectedPlace.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'} />
+                                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                             <div className="absolute bottom-2 left-2 text-white font-bold text-sm bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+                                                {selectedPlace.subtag}
+                                             </div>
+                                        </div>
+                                        
+                                        <h4 className="font-bold text-2xl text-slate-800 dark:text-white mb-2 leading-tight">{selectedPlace.title}</h4>
+                                        
+                                        <div className="flex justify-center gap-2 mb-4">
+                                            <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                                                <Icon name="clock" className="w-3 h-3"/> {selectedPlace.time}
+                                            </span>
+                                            <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
+                                                Res: {selectedPlace.res}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
+                                            {selectedPlace.desc}
+                                        </p>
+                                        
+                                        <div className="font-mono text-2xl text-amber-600 dark:text-amber-400 font-bold mb-6">
+                                            ca. {selectedPlace.cost}.-
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <button 
+                                    onClick={handleAddToFav} 
+                                    className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${
+                                        added 
+                                        ? 'bg-green-500 text-white hover:bg-green-600' 
+                                        : 'bg-slate-900 dark:bg-amber-600 text-white hover:bg-slate-800 dark:hover:bg-amber-500'
+                                    }`} 
+                                    disabled={isSpinning}
+                                >
+                                    {isSpinning ? (
+                                        <>
+                                            <Icon name="loader-2" className="w-4 h-4 animate-spin"/>
+                                            Rolling...
+                                        </>
+                                    ) : (
+                                        added ? (
+                                            <>
+                                                <Icon name="check" className="w-4 h-4"/>
+                                                Hinzugefügt! ❤️
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Icon name="heart" className="w-4 h-4"/>
+                                                Zu Favoriten ❤️
+                                            </>
+                                        )
+                                    )}
+                                </button>
                             </div>
-                        )}
-                        
-                        <button 
-                            onClick={handleAddToFav} 
-                            className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${
-                                added 
-                                ? 'bg-green-500 text-white hover:bg-green-600' 
-                                : 'bg-slate-900 dark:bg-amber-600 text-white hover:bg-slate-800 dark:hover:bg-amber-500'
-                            }`} 
-                            disabled={isSpinning}
-                        >
-                            {isSpinning ? (
-                                <>
-                                    <Icon name="loader-2" className="w-4 h-4 animate-spin"/>
-                                    Rolling...
-                                </>
-                            ) : (
-                                added ? (
-                                    <>
-                                        <Icon name="check" className="w-4 h-4"/>
-                                        Hinzugefügt! ❤️
-                                    </>
-                                ) : (
-                                    <>
-                                        <Icon name="heart" className="w-4 h-4"/>
-                                        Zu Favoriten ❤️
-                                    </>
-                                )
-                            )}
-                        </button>
-                    </div>
-                </div>
+                        </div>
+                    )}
+                </>
             );
         };
 
@@ -823,10 +980,12 @@
                 };
 
                 updateProgress();
+                // Update every minute to allow "live" movement if page stays open
                 const interval = setInterval(updateProgress, 60000);
                 return () => clearInterval(interval);
             }, []);
 
+            // Days array for rendering grid
             const days = [
                 { date: '01.04', label: 'Mi' },
                 { date: '02.04', label: 'Do' },
@@ -843,6 +1002,7 @@
             return (
                 <div className="w-full pt-8 pb-4 hidden md:block"> 
                     <div className="max-w-5xl mx-auto relative px-4">
+                        {/* LABELS ROW */}
                         <div className="grid grid-cols-10 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">
                             {days.map((day, i) => (
                                 <div key={i} className="flex flex-col items-center">
@@ -852,16 +1012,20 @@
                             ))}
                         </div>
 
+                        {/* PROGRESS BAR TRACK */}
                         <div className="relative w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner mt-1">
+                            {/* SEGMENTS BACKGROUND */}
                             <div className="absolute inset-0 flex h-full opacity-30">
-                                <div className="w-[35%] bg-rose-300"></div>
-                                <div className="w-[30%] bg-amber-300"></div>
-                                <div className="w-[35%] bg-emerald-300"></div>
+                                <div className="w-[35%] bg-rose-300"></div> {/* Budapest: Wed, Thu, Fri, Sat (noon) = 3.5 days -> 35% */}
+                                <div className="w-[30%] bg-amber-300"></div> {/* Vienna: Sat (pm), Sun, Mon, Tue (noon) = 3.0 days -> 30% */}
+                                <div className="w-[35%] bg-emerald-300"></div> {/* Prague: Tue (pm), Wed, Thu, Fri = 3.5 days -> 35% */}
                             </div>
                             
+                            {/* ACTIVE FILL */}
                             <div className="h-full bg-rose-500 dark:bg-rose-600 transition-all duration-1000 ease-linear shadow-lg relative z-10" style={{width: `${progress}%`}}></div>
                         </div>
 
+                        {/* BEER CURSOR - Positioned exactly on the line (vertically centered on the 12px height bar) */}
                         <div 
                             className="absolute top-[38px] text-2xl transition-all duration-1000 ease-linear beer-cursor z-20 filter drop-shadow-lg" 
                             style={{ left: `calc(${progress}% - 12px)`, marginTop: '-12px' }} 
@@ -874,9 +1038,6 @@
             );
         };
 
-        // ... [Rest of components: Card, CurrencyConverter, StaticAlternativesModal, ChallengeButton, CountDown, MapView, SurvivalDictionary same as V31]
-        // But need to define Card and StaticAlternativesModal to avoid errors
-        
         const StaticAlternativesModal = ({ isOpen, onClose, currentItem }) => {
             const [alternatives, setAlternatives] = useState([]);
 
@@ -1074,13 +1235,8 @@
             };
 
             const openMaps = () => {
-                // Logic to use lat/lng if available for better precision, else address
-                if (item.lat && item.lng) {
-                     window.open(`https://maps.google.com/?q=${item.lat},${item.lng}`, '_blank');
-                } else {
-                     const query = encodeURIComponent(item.address || `${item.title}, ${item.city}`);
-                     window.open(`https://maps.google.com/?q=${query}`, '_blank');
-                }
+                const query = encodeURIComponent(item.address || `${item.title}, ${item.city}`);
+                window.open(`https://maps.google.com/?q=${query}`, '_blank');
             };
 
             const getResBadge = (res) => {
@@ -1109,6 +1265,8 @@
 
             return (
                 <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm border ${themeClass} overflow-hidden card-hover flex flex-col h-full fade-in relative group`}>
+                    
+                    {/* Header Image Area */}
                     <div className="h-44 relative bg-slate-100 dark:bg-slate-700 overflow-hidden">
                         {!imgError && item.img ? (
                             <img src={imagePath} alt={item.title} className="w-full h-full object-cover transition-opacity duration-300" onError={() => setImgError(true)} />
@@ -1190,26 +1348,33 @@
             const [modalOpen, setModalOpen] = useState(false);
             const [modalItem, setModalItem] = useState(null);
             
-            // Roulette State
-            const [rouletteOpen, setRouletteOpen] = useState(false);
-            const [selectedRoulettePlace, setSelectedRoulettePlace] = useState(null);
-            const [isSpinning, setIsSpinning] = useState(false);
-            const [rouletteAdded, setRouletteAdded] = useState(false);
-
             // Dark Mode State
             const [darkMode, setDarkMode] = useState(false);
+            const [drunkMode, setDrunkMode] = useState(false);
 
             useEffect(() => {
-                if (darkMode) {
+                if (drunkMode) {
+                     document.body.classList.add('drunk-mode');
+                     // Drunk mode implies Dark mode visually
+                     document.documentElement.classList.add('dark');
+                } else {
+                     document.body.classList.remove('drunk-mode');
+                     if (!darkMode) {
+                        document.documentElement.classList.remove('dark');
+                     }
+                }
+                
+                // Normal Dark Mode Logic
+                if (darkMode && !drunkMode) {
                     document.documentElement.classList.add('dark');
                     document.body.classList.add('bg-pattern-dark');
                     document.body.classList.remove('bg-pattern-light');
-                } else {
+                } else if (!drunkMode) {
                     document.documentElement.classList.remove('dark');
                     document.body.classList.add('bg-pattern-light');
                     document.body.classList.remove('bg-pattern-dark');
                 }
-            }, [darkMode]);
+            }, [darkMode, drunkMode]);
             
             const [toastMsg, setToastMsg] = useState("");
             const [showToast, setShowToast] = useState(false);
@@ -1268,10 +1433,16 @@
                 }
                 return DB.filter(item => {
                     if (cityFilter !== item.city) return false;
+                    
+                    // Drunk Mode Filter on List View too
+                    if (drunkMode) {
+                        if (item.cat === 'Aktivität' || item.cat === 'Transport') return false;
+                    }
+                    
                     if (catFilter === "Alle") return true;
                     return item.cat === catFilter;
                 });
-            }, [cityFilter, catFilter, favs]);
+            }, [cityFilter, catFilter, favs, drunkMode]);
 
             const handleShowAlternatives = (item) => {
                 setModalItem(item);
@@ -1280,6 +1451,12 @@
 
             const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
             
+            // ROULETTE STATE
+            const [rouletteOpen, setRouletteOpen] = useState(false);
+            const [selectedRoulettePlace, setSelectedRoulettePlace] = useState(null);
+            const [isSpinning, setIsSpinning] = useState(false);
+            const [rouletteAdded, setRouletteAdded] = useState(false);
+
             const handleOpenRoulette = () => {
                 setRouletteOpen(true);
                 setIsSpinning(true);
@@ -1335,9 +1512,17 @@
                         <div className="flex flex-col gap-4 max-w-7xl mx-auto">
                             <div className="flex flex-row justify-between items-center gap-4">
                                 <div>
-                                    <h1 className="text-xl font-bold tracking-tighter text-rose-900 dark:text-rose-400 flex items-center gap-2">
-                                        Bingus & Amor <span className="bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-200 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
-                                    </h1>
+                                    <div className="flex items-center gap-2">
+                                        <h1 className="text-xl font-bold tracking-tighter text-rose-900 dark:text-rose-400 flex items-center gap-2">
+                                            Bingus & Amor <span className="bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-200 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest">Trip 2026</span>
+                                        </h1>
+                                        {/* Simple Weather Display Mock */}
+                                        {cityFilter !== 'Transfer' && cityFilter !== 'Favs' && (
+                                            <div className="flex items-center gap-1 text-xs text-slate-500 bg-blue-50 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                                                <span>☀️</span> <span>18°C</span>
+                                            </div>
+                                        )}
+                                    </div>
                                     <div className="hidden md:block">
                                         {tripActive ? (
                                             <div className="text-xs font-bold text-rose-500 animate-pulse">Der Trip läuft! 🚀</div>
@@ -1353,8 +1538,18 @@
                                 </div>
                                 
                                 <div className="hidden md:flex items-center gap-3">
-                                   <CurrencyConverter />
+                                   <CurrencyConverter city={cityFilter}/>
                                    
+                                   {/* Drunk Mode Toggle */}
+                                   <button 
+                                        onClick={() => setDrunkMode(!drunkMode)} 
+                                        className={`p-3 rounded-2xl border shadow-sm transition-all hover:scale-105 ${drunkMode ? 'bg-black border-neon-green text-neon-green' : 'bg-white dark:bg-slate-800 border-rose-100 dark:border-slate-700 text-slate-600 dark:text-yellow-400'}`}
+                                        title="Drunk Mode"
+                                   >
+                                        <Icon name="ghost" className="w-4 h-4"/>
+                                   </button>
+                                   
+                                   {/* Dark Mode Toggle */}
                                    <button 
                                         onClick={() => setDarkMode(!darkMode)} 
                                         className="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-rose-100 dark:border-slate-700 shadow-sm text-slate-600 dark:text-yellow-400 transition-all hover:scale-105"
@@ -1410,7 +1605,7 @@
                                              ))}
                                              <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
                                              <div className="flex-shrink-0">
-                                                 <FoodRouletteButton spin={handleOpenRoulette} city={cityFilter} />
+                                                 <FoodRoulette city={cityFilter} toggleFav={toggleFav} />
                                              </div>
                                          </div>
                                      )}
@@ -1430,6 +1625,12 @@
                             
                             <div className="flex justify-between gap-2">
                                 <button 
+                                    onClick={() => setDrunkMode(!drunkMode)} 
+                                    className={`p-2 rounded-xl border flex-1 flex items-center justify-center gap-2 text-xs font-bold ${drunkMode ? 'bg-black border-neon-green text-neon-green' : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}
+                                >
+                                    <Icon name="ghost" className="w-4 h-4"/> Drunk Mode
+                                </button>
+                                <button 
                                     onClick={() => setDarkMode(!darkMode)} 
                                     className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex-1 flex items-center justify-center gap-2 text-xs font-bold"
                                 >
@@ -1443,7 +1644,7 @@
                                 </button>
                             </div>
 
-                            <CurrencyConverter />
+                            <CurrencyConverter city={cityFilter}/>
                             <div className="flex justify-center gap-2">
                                 <button onClick={() => { setView('hub'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'hub' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Hub</button>
                                 <button onClick={() => { setView('calendar'); setIsMenuOpen(false); }} className={`flex-1 py-2 rounded-lg text-sm font-bold ${view === 'calendar' ? 'bg-rose-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>Kalender</button>
@@ -1467,7 +1668,7 @@
                                             ))}
                                             <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1 flex-shrink-0"></div>
                                             <div className="flex-shrink-0">
-                                                <FoodRouletteButton spin={handleOpenRoulette} city={cityFilter} />
+                                                <FoodRoulette city={cityFilter} toggleFav={toggleFav} />
                                             </div>
                                         </div>
                                     )}
@@ -1503,7 +1704,7 @@
                         ) : (
                             <div className="p-4 fade-in h-full relative">
                                 <div className="bg-white dark:bg-slate-800 rounded-3xl p-2 shadow-lg h-full border-4 border-white dark:border-slate-700">
-                                    <MapView items={filteredDB} activeCity={cityFilter === 'Favs' ? 'Budapest' : cityFilter} />
+                                    <MapView items={filteredDB} activeCity={cityFilter === 'Favs' ? 'Budapest' : cityFilter} drunkMode={drunkMode} />
                                 </div>
                                 <div className="mt-4 text-center text-xs text-slate-400 dark:text-slate-500 font-bold bg-white/80 dark:bg-slate-800/80 inline-block px-4 py-2 rounded-full backdrop-blur-sm mx-auto flex flex-wrap justify-center border border-white dark:border-slate-700 gap-3">
                                     <span>🥐 Frühstück/Café</span>
@@ -1538,6 +1739,92 @@
                 </div>
             );
         };
+        
+        // --- Added back FoodRouletteModal ---
+        const FoodRouletteModal = ({ isOpen, onClose, selectedPlace, isSpinning, added, handleAddToFav }) => {
+            if (!isOpen) return null;
+            
+            return (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm modal-enter" onClick={onClose}>
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-6 text-center shadow-2xl relative border-4 border-amber-200 dark:border-amber-900" onClick={e => e.stopPropagation()}>
+                        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full z-10"><Icon name="x" className="w-5 h-5 text-slate-400"/></button>
+                        
+                        <h3 className="text-xl font-bold text-amber-600 dark:text-amber-400 mb-4">Food Roulette 🎰</h3>
+                        
+                        {selectedPlace && (
+                            <div className={`transition-opacity duration-200 ${isSpinning ? 'opacity-50 blur-sm' : 'opacity-100'}`}>
+                                <div className="h-48 w-full rounded-xl overflow-hidden mb-4 relative shadow-inner group">
+                                        <img src={selectedPlace.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'} />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                        <div className="absolute bottom-2 left-2 text-white font-bold text-sm bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+                                        {selectedPlace.subtag}
+                                        </div>
+                                </div>
+                                
+                                <h4 className="font-bold text-2xl text-slate-800 dark:text-white mb-2 leading-tight">{selectedPlace.title}</h4>
+                                
+                                <div className="flex justify-center gap-2 mb-4">
+                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                                        <Icon name="clock" className="w-3 h-3"/> {selectedPlace.time}
+                                    </span>
+                                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
+                                        Res: {selectedPlace.res}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl">
+                                    {selectedPlace.desc}
+                                </p>
+                                
+                                <div className="font-mono text-2xl text-amber-600 dark:text-amber-400 font-bold mb-6">
+                                    ca. {selectedPlace.cost}.-
+                                </div>
+                            </div>
+                        )}
+                        
+                        <button 
+                            onClick={handleAddToFav} 
+                            className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 ${
+                                added 
+                                ? 'bg-green-500 text-white hover:bg-green-600' 
+                                : 'bg-slate-900 dark:bg-amber-600 text-white hover:bg-slate-800 dark:hover:bg-amber-500'
+                            }`} 
+                            disabled={isSpinning}
+                        >
+                            {isSpinning ? (
+                                <>
+                                    <Icon name="loader-2" className="w-4 h-4 animate-spin"/>
+                                    Rolling...
+                                </>
+                            ) : (
+                                added ? (
+                                    <>
+                                        <Icon name="check" className="w-4 h-4"/>
+                                        Hinzugefügt! ❤️
+                                    </>
+                                ) : (
+                                    <>
+                                        <Icon name="heart" className="w-4 h-4"/>
+                                        Zu Favoriten ❤️
+                                    </>
+                                )
+                            )}
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- Renamed FoodRouletteButton for consistency ---
+        const FoodRouletteButton = ({ spin }) => (
+             <button 
+                onClick={spin}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:hover:bg-amber-900/60 flex items-center gap-1 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
+                title="Food Roulette"
+            >
+                <span>🎲</span> Hunger?
+            </button>
+        );
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
