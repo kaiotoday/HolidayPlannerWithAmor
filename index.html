@@ -1006,13 +1006,13 @@ const EmergencyButton = ({ onClick }) => (
 
             const totalDrinks = sessionCounts.beer + sessionCounts.wine + sessionCounts.shots + sessionCounts.cocktails;
             let status = "Nüchtern";
-            if (totalDrinks > 0) status = "Warmup 🏎️";
-            if (totalDrinks > 2) status = "Leicht einen sitzen 🥴";
+            if (totalDrinks > 1) status = "Warmup 🏎️";
+            if (totalDrinks > 3) status = "Leicht einen sitzen 🥴";
             if (totalDrinks > 4) status = "Gut dabei 🥳";
-            if (totalDrinks > 6) status = "Spricht fließend Ungarisch 🇭🇺";
-            if (totalDrinks > 8) status = "Crazy Makeout Sesh??";
-            if (totalDrinks > 10) status = "Amor muss tragen 💘";
-            if (totalDrinks > 12) status = "GAME OVER 💀";
+            if (totalDrinks > 5) status = "Spricht fließend Ungarisch 🇭🇺";
+            if (totalDrinks > 7) status = "Crazy Makeout Sesh??";
+            if (totalDrinks > 8) status = "Amor muss tragen 💘";
+            if (totalDrinks > 10) status = "GAME OVER 💀";
 
             if (!isOpen) return null;
 
